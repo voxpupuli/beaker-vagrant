@@ -27,6 +27,6 @@ VERSION_STRING =
 
 
 
-puts VERSION_STRING % [BeakerTemplate::Version::STRING]
+puts VERSION_STRING % [Beaker::DSL::Helpers::Template::Version::STRING]
 
 exit 0
