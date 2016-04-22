@@ -11,12 +11,33 @@ There are two reasons to create a Beaker library:
 
 These instructions are here to give people a working guide on how to create your own Beaker
 libraries for the second use case. If you'd like to pull functionality out of Beaker
-(the first use case), then please create a 
+(the first use case), then please create a
 [Beaker JIRA](https://tickets.puppetlabs.com/browse/BKR)
 ticket for it, and we can discuss that there.
 
+# Just tell me [how](#howto)
 
+# When to create a beaker-library:
+* code smells
+  * repeated code across repos
+  * methods duplicated from beaker
+  * no/little tests, no CI for tests
+* when functionality is specific to software under test
+  * But is useful across multiple projects, testing libraries
+  * And does not belong in Beaker-core
+    * e.g.: It is not host abstraction, provisioning, nor test-running
+* when functionality is specific to puppetlabs or other non-provisioning infrastructure
+
+# When to _not_ create a beaker-library
+* when changes belong in a beaker-core
+  * provisioning
+  * Host-abstraction (communication, information)
+  * test running, assertions
+https://tickets.puppetlabs.com/browse/BKR-334
+
+<a name="howto">
 # Beaker Library Creation Process Overview
+</a>
 
 This section covers the high-level process of creating a Beaker library.
 If you'd like to know more about a particular step, checkout its section below.
@@ -53,7 +74,7 @@ The `beaker-template.rb` file under what was `lib/beaker-template` will have to
 be changed to match this new name as well.
 
 ### B. Code changes
-  
+
 The template provides you with the default module path `Beaker::DSL::Helpers::Template`.
 This path follows from the DSL pattern within Beaker, and `Beaker::DSL::Helpers`
 should stay at the front of your path. `Template` should be changed to the name
@@ -62,18 +83,18 @@ general search-and-destroy for the word `Template` should cover it.
 
 
 `require` references will need to be updated as well.  Searching and replacing
-all lines that include: 
+all lines that include:
 
     require 'beaker-template
-    
+
 should cover all uses of this.
 
-### C. Gemspec changes 
+### C. Gemspec changes
 
 The gemspec file has a few additional changes that will be required.
 
 
-It includes both the require and module path changes as well.
+It includes both the require and module path changes.
 
 
 A general audit of every line of the `beaker-template.gemspec` file should be done,
@@ -94,14 +115,14 @@ with spec testing by running the `test:spec:coverage` rake task.
 These will fail by default.  This is on purpose, as some test refactoring (and
 hopefully test addition) should be done prior to wanting to release a library.
 Please add more spec tests either in what started as `spec/beaker-template/helpers_spec.rb`,
-or create more spec testing files under `spec/beaker-template`, and they'll be 
+or create more spec testing files under `spec/beaker-template`, and they'll be
 included in spec testing automatically.
 
 ## 4. Create acceptance tests
 
 Acceptance tests live in the `acceptance/tests` folder.  These are Beaker tests,
 & are dependent on having Beaker installed. Note that this will happen with a
-`bundle install` execution, but can be avoided if you're not looking to run 
+`bundle install` execution, but can be avoided if you're not looking to run
 acceptance tests by ignoring the `acceptance_testing` gem group.
 
 
@@ -120,7 +141,7 @@ spec tests.
 _But wait_, you might be thinking, _what about developing the functionality?_
 Sure, we expect that to happen before this step. But, we're figuring that naming
 it in an explicit step would get us into a debate over TDD, or just the relative
-positioning of development in general. Let's just say that you've gotten over 
+positioning of development in general. Let's just say that you've gotten over
 that part at some point in the recent past.
 
 
@@ -129,4 +150,30 @@ To publish your library as an official Beaker library, open a
 can talk about setting up the Jenkins jobs to get this testing & released as an
 Official Beaker Library Gem!
 
-## 6. Profit!
+## Notes
+
+### When to Breaking-Change
+
+* if moving existing functionality out of beaker, first release should not be a breaking change in beaker 2.x
+  * retain method and DSL naming and signature and the code move will be seamless to the user
+  * add the new library to beaker’s gemspec file so it is pulled in appropriately
+* always deprecate first
+  * This is a manual process for now
+  * use logging as appropriate to notify users of deprecations
+* always conform to semver
+  * [http://semver.org/]
+  * TL;DR: libraries shall deprecate. Breaking changes only on major version increments
+* if existing helpers are not named consistently
+  * we can mitigate changes by aliasing method names and deprecating
+* if existing helpers need conflicting parameter changes (method signature changes)
+
+### Documentation and Discoverability
+
+Beaker DSL keywords and helper methods can be difficult to find. Beaker documentation best practices and improvements can improve discoverability for existing beaker functionality and libraries.
+New, published, libraries should be added to the Beaker library list in its [docs](https://github.com/puppetlabs/beaker/blob/master/docs/Beaker-Libraries.md)
+
+Hand-crafted (non yardoc) docs should be contained, in-repo, in Markdown, so as to be fully available and PR-able.
+PRs for beaker and libraries should not be accepted without yardoc changes, and beaker/docs, <library>/docs changes.
+
+## See also:
+* [beaker-windows](https://github.com/puppetlabs/beaker-windows) (a modern example)
