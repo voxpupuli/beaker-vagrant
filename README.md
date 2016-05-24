@@ -144,11 +144,16 @@ it in an explicit step would get us into a debate over TDD, or just the relative
 positioning of development in general. Let's just say that you've gotten over
 that part at some point in the recent past.
 
-
-To publish your library as an official Beaker library, open a
+If you're a puppet employee who maintains a Beaker library, & you'd like to have
+that library tested & published using our internal tooling & infrastructure, open a
 [Beaker JIRA ticket](https://tickets.puppetlabs.com/browse/BKR) to do so, and we
-can talk about setting up the Jenkins jobs to get this testing & released as an
-Official Beaker Library Gem!
+can talk about setting up the Jenkins jobs to get this tested & released using those.
+
+For someone outside the company who would like to run a similar process to what
+we do internally, we just maintain two kinds of jobs for each Beaker library:
+
+1. Test jobs that invoke the rake tasks mentioned in the testing sections. These are targeted on submitted PRs.
+2. Gem publish jobs that are only manually kicked to release new versions of the Beaker library gem.
 
 ## Notes
 
