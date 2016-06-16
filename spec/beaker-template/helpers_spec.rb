@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 class ClassMixedWithDSLHelpers
+  include BeakerTestHelpers
   include Beaker::DSL::Template::Helpers
 
   def logger
