@@ -1,7 +1,7 @@
 module Beaker
   module DSL
-    module Helpers
-      module Template
+    module Template
+      module Helpers
 
         # include your helper methods here as simple method definitions
 
