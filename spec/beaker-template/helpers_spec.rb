@@ -18,5 +18,9 @@ describe ClassMixedWithDSLHelpers do
       expect( Beaker::DSL::Template::Version::STRING ).to_not be === '0.0.1rc0'
     end
 
+    it 'has a MAINTAINERS doc' do
+      expect( File.exist?( 'MAINTAINERS' ) ).to be_truthy
+    end
+
   end
 end

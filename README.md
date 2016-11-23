@@ -64,11 +64,9 @@ The accepted naming pattern for Beaker libraries follows from 'beaker-template',
 where you change `template` to match the name of the library you're creating. Some
 examples would be `beaker-hiera`, `beaker-facter`, `beaker-puppet`, etc.
 
-
 Once you've chosen your library name, you'll have to change a number of files to
 match it. The main project folder, and the corresponding folder under `lib` will
 both have to be renamed.
-
 
 The `beaker-template.rb` file under what was `lib/beaker-template` will have to
 be changed to match this new name as well.
@@ -81,7 +79,6 @@ should stay at the front of your path. `Template` should be changed to the name
 of your project. This change will be needed in a number of places, and doing a
 general search-and-destroy for the word `Template` should cover it.
 
-
 `require` references will need to be updated as well.  Searching and replacing
 all lines that include:
 
@@ -93,9 +90,7 @@ should cover all uses of this.
 
 The gemspec file has a few additional changes that will be required.
 
-
 It includes both the require and module path changes.
-
 
 A general audit of every line of the `beaker-template.gemspec` file should be done,
 which should include renaming it to the name of the project, and changing most,
@@ -107,10 +102,8 @@ Spec tests all live under the `spec` folder.  These are the default rake task, &
 so can be run with a simple `bundle exec rake`, as well as being fully specified
 by running `bundle exec rake test:spec:run` or using the `test:spec` task.
 
-
 There are also code coverage tests built into the template, which can be run
 with spec testing by running the `test:spec:coverage` rake task.
-
 
 These will fail by default.  This is on purpose, as some test refactoring (and
 hopefully test addition) should be done prior to wanting to release a library.
@@ -125,18 +118,38 @@ Acceptance tests live in the `acceptance/tests` folder.  These are Beaker tests,
 `bundle install` execution, but can be avoided if you're not looking to run
 acceptance tests by ignoring the `acceptance_testing` gem group.
 
-
 You can run the acceptance testing suite by invoking the `test:acceptance` rake
 task. It should be noted that this is a shortcut for the `test:acceptance:quick`
 task, which is named as such because it uses no pre-suite.  This uses a default
 provided hosts file for acceptance under the `acceptance/config` directory. If
 you'd like to provide your own hosts file, set the `CONFIG` environment variable.
 
-
 Acceptance tests will also fail by default, for the same reason given above as
 spec tests.
 
-## 5. Publish your library!
+## 5. Create documentation
+
+In our experience, the better the documentation, the easier to use a library
+usually is. A beginner version of documentation can simply link to the
+Rubydocs that will be generated automatically (example from 
+[beaker-pe](https://github.com/puppetlabs/beaker-pe)):
+
+- [Rubydocs](http://www.rubydoc.info/github/puppetlabs/beaker-pe) contain the
+technical reference for APIs and other aspects of beaker-pe. They describe
+how it works and how to use it but assume that you have a basic understanding
+of key concepts.
+
+If you want a fully fleshed out example of what a full documentation table of
+contents might look like, checkout
+[beaker's docs](https://github.com/puppetlabs/beaker/blob/master/docs/README.md).
+
+Please also include a MAINTAINERS file and link to it from your README.md. This
+is so that people know how they can get feedback, and where they should go to
+seek that out. If you'd like a tool to help create these automatically, then
+please checkout Puppet's
+[maintainers gem](https://github.com/puppetlabs/maintainers).
+
+## 6. Publish your library!
 
 _But wait_, you might be thinking, _what about developing the functionality?_
 Sure, we expect that to happen before this step. But, we're figuring that naming
