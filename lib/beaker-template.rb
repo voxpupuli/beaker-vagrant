@@ -18,8 +18,8 @@ end
 # Boilerplate DSL inclusion mechanism:
 # First we register our module with the Beaker DSL
 Beaker::DSL.register( Beaker::DSL::Template )
-# Then we have to re-include our amended DSL in the TestCase,
-# because in general, the DSL is included in TestCase far
-# before test files are executed, so our amendments wouldn't
-# come through otherwise
-include Beaker::DSL
+# Modules added into a module which has previously been included are not
+# retroactively included in the including class.
+#
+# https://github.com/adrianomitre/retroactive_module_inclusion
+Beaker::TestCase.class_eval { include Beaker::DSL }
