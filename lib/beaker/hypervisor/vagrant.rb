@@ -3,6 +3,7 @@ require 'open3'
 module Beaker
   class Vagrant < Beaker::Hypervisor
 
+    require 'beaker/hypervisor/vagrant_virtualbox'
     # Return a random mac address
     #
     # @return [String] a random mac address

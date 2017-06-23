@@ -1,0 +1,26 @@
+HOSTS:
+  redhat7-64-1:
+    roles:
+      - master
+      - agent
+      - dashboard
+      - databse
+      - classifier
+      - default
+    platform: el-7-x86_64 
+    template: redhat-7-x86_64
+    box: puppetlabs/centos-7.0-64-nocm
+    box_url: https://vagrantcloud.com/puppetlabs/boxes/centos-7.0-64-nocm
+    hypervisor: vagrant
+  redhat7-64-2:
+    roles:
+      - agent
+      - frinctionless
+    platform: el-7-x86_64
+    template: redhat-7-x86_64
+    box: puppetlabs/centos-7.0-64-nocm 
+    box_url: https://vagrantcloud.com/puppetlabs/boxes/centos-7.0-64-nocm
+    hypervisor: vagrant
+CONFIG:
+  nfs_server: none
+  consoleport: 443
