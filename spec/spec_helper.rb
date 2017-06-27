@@ -2,9 +2,7 @@ require 'simplecov'
 require 'rspec/its'
 require 'beaker'
 
-Dir.glob('/Users/rishi.javia/Documents/beaker-vagrant/lib/beaker/hypervisor/*.rb') do |file|
-  require_relative file
-end
+Dir.glob(Dir.pwd + '/lib/beaker/hypervisor/*.rb') {|file| require file}
 
 # setup & require beaker's spec_helper.rb
 beaker_gem_spec = Gem::Specification.find_by_name('beaker')
