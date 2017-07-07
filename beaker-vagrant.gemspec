@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version     = '0.0.1'
   s.authors     = ["Rishi Javia, Kevin Imber, Tony Vu"]
   s.email       = ["rishi.javia@puppet.com, kevin.imber@puppet.com, tony.vu@puppet.com"]
-  s.homepage    = "https://github.com/rishijavia/beaker-vagrant"
+  s.homepage    = "https://github.com/puppetlabs/beaker-vagrant"
   s.summary     = %q{Beaker DSL Extension Helpers!}
   s.description = %q{For use for the Beaker acceptance testing tool}
   s.license     = 'Apache2'

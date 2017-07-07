@@ -15,7 +15,6 @@ HOSTS:
   redhat7-64-2:
     roles:
       - agent
-      - frinctionless
     platform: el-7-x86_64
     template: redhat-7-x86_64
     box: puppetlabs/centos-7.0-64-nocm 
