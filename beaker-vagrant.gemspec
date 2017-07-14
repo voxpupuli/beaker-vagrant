@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
+require 'beaker-vagrant/version'
 
 Gem::Specification.new do |s|
   s.name        = "beaker-vagrant"
-  s.version     = '0.0.1'
+  s.version     = BeakerVagrant::VERSION
   s.authors     = ["Rishi Javia, Kevin Imber, Tony Vu"]
   s.email       = ["rishi.javia@puppet.com, kevin.imber@puppet.com, tony.vu@puppet.com"]
   s.homepage    = "https://github.com/puppetlabs/beaker-vagrant"

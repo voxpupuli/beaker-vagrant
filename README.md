@@ -4,7 +4,7 @@ Beaker library to use vmpooler hypervisor
 
 # How to use this wizardry
 
-This is a gem that allows you to use hosts with [vagrant](vagrant.md) hypervisor with [beaker](https://github.com/puppetlabs/beaker). 
+This is a gem that allows you to use hosts with [vagrant](docs/vagrant.md) hypervisor with [beaker](https://github.com/puppetlabs/beaker). 
 
 ### Right Now? (beaker 3.x)
 

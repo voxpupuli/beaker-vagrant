@@ -6,4 +6,4 @@ SimpleCov.configure do
   end
 end
 
-SimpleCov.start if ENV['BEAKER_TEMPLATE_COVERAGE']
+SimpleCov.start if ENV['BEAKER_VAGRANT_COVERAGE']
