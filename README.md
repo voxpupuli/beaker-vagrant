@@ -1,6 +1,6 @@
 # beaker-vagrant
 
-Beaker library to use vmpooler hypervisor
+Beaker library to use vagrant hypervisor
 
 # How to use this wizardry
 
