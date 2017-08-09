@@ -16,7 +16,7 @@ describe Beaker::VagrantDesktop do
       expect( vagrant ).to receive( :set_ssh_config ).with( host, host_prev_name ).once
     end
     expect( vagrant ).to receive( :hack_etc_hosts ).with( @hosts, options ).once
-    expect( vagrant ).to receive( :vagrant_cmd ).with( "up --provider vmware_desktop" ).once
+    expect( vagrant ).to receive( :vagrant_cmd ).with( "up --provider vmware_workstation" ).once
     vagrant.provision
   end
 

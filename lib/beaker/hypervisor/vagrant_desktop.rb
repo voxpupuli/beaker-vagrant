@@ -1,7 +1,7 @@
 require 'beaker/hypervisor/vagrant'
 
 class Beaker::VagrantDesktop < Beaker::Vagrant
-  def provision(provider = 'vmware_desktop')
+  def provision(provider = 'vmware_workstation')
     super
   end
 
