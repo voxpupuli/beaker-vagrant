@@ -37,6 +37,7 @@ module Beaker
       v_file = "Vagrant.configure(\"2\") do |c|\n"
       v_file << "  c.ssh.forward_agent = true\n" if options[:forward_ssh_agent] == true
       v_file << "  c.ssh.insert_key = false\n"
+
       hosts.each do |host|
         host['ip'] ||= randip #use the existing ip, otherwise default to a random ip
         v_file << "  c.vm.define '#{host.name}' do |v|\n"
@@ -44,6 +45,7 @@ module Beaker
         v_file << "    v.vm.box = '#{host['box']}'\n"
         v_file << "    v.vm.box_url = '#{host['box_url']}'\n" unless host['box_url'].nil?
         v_file << "    v.vm.box_version = '#{host['box_version']}'\n" unless host['box_version'].nil?
+        v_file << "    v.vm.box_download_insecure = '#{host['box_download_insecure']}'\n" unless host['box_download_insecure'].nil?
         v_file << "    v.vm.box_check_update = '#{host['box_check_update'] ||= 'true'}'\n"
         v_file << "    v.vm.synced_folder '.', '/vagrant', disabled: true\n" if host['synced_folder'] == 'disabled'
         v_file << private_network_generator(host)
