@@ -39,6 +39,7 @@ module Beaker
       v_file << "  c.ssh.insert_key = false\n"
 
       hosts.each do |host|
+        host.name.tr!('_','-') # Rewrite Hostname with hyphens instead of underscores to get legal hostname
         host['ip'] ||= randip #use the existing ip, otherwise default to a random ip
         v_file << "  c.vm.define '#{host.name}' do |v|\n"
         v_file << "    v.vm.hostname = '#{host.name}'\n"

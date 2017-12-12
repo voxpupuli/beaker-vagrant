@@ -106,6 +106,18 @@ EOF
       expect( vagrantfile ).to match(/(ssh.forward_agent = true)/)
     end
 
+    it "can replace underscores in host.name with hypens" do
+      path = vagrant.instance_variable_get( :@vagrant_path )
+      allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
+
+      host = make_host( 'name-with_underscore', {} ) 
+      vagrant.make_vfile( [host,], options )
+
+      vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
+      expect( vagrantfile ).to match(/v.vm.hostname = .*name-with-underscore/)
+
+    end
+
     it "can make a Vagrantfile with synced_folder disabled" do
       path = vagrant.instance_variable_get( :@vagrant_path )
       allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
