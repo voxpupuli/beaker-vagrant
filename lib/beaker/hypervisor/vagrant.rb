@@ -49,7 +49,7 @@ module Beaker
         v_file << "    v.vm.box_download_insecure = '#{host['box_download_insecure']}'\n" unless host['box_download_insecure'].nil?
         v_file << "    v.vm.box_check_update = '#{host['box_check_update'] ||= 'true'}'\n"
         v_file << "    v.vm.synced_folder '.', '/vagrant', disabled: true\n" if host['synced_folder'] == 'disabled'
-        v_file << private_network_generator(host)
+        v_file << private_network_generator(host) unless (host['private_network_disable'].nil? and host['private_network_disable'] == 'true' )
 
         unless host['mount_folders'].nil?
           host['mount_folders'].each do |name, folder|
