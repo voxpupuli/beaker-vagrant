@@ -53,7 +53,11 @@ module Beaker
 
         unless host['mount_folders'].nil?
           host['mount_folders'].each do |name, folder|
-            v_file << "    v.vm.synced_folder '#{folder[:from]}', '#{folder[:to]}', create: true\n"
+            unless folder[:from].nil? or folder[:to].nil?
+              v_file << "    v.vm.synced_folder '#{folder[:from]}', '#{folder[:to]}', create: true\n"
+            else
+              @logger.warn "Using 'mount_folders' requires options 'from' and 'to' for vagrant node, given #{folder.inspect}"
+            end
           end
         end
 

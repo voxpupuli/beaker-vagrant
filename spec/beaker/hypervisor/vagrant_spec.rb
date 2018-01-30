@@ -110,7 +110,7 @@ EOF
       path = vagrant.instance_variable_get( :@vagrant_path )
       allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
 
-      host = make_host( 'name-with_underscore', {} ) 
+      host = make_host( 'name-with_underscore', {} )
       vagrant.make_vfile( [host,], options )
 
       vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
@@ -157,6 +157,25 @@ EOF
 
       vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
       expect( vagrantfile ).to match(/v.vm.network :private_network, ip: "ip.address.for.vm1", :netmask => "255.255.0.0"/)
+    end
+
+    it "can make a Vagrantfile with inproper keys for synced folders" do
+      path = vagrant.instance_variable_get( :@vagrant_path )
+
+      hosts = make_hosts({:mount_folders => {
+        :test_invalid1 => {:host_path => '/invalid1', :container_path => '/invalid1'},
+        :test_invalid2 => {:from => '/invalid2', :container_path => '/invalid2'},
+        :test_invalid3 => {:host_path => '/invalid3', :to => '/invalid3'},
+        :test_valid => {:from => '/valid', :to => '/valid'}
+      }},1)
+      vagrant.make_vfile( hosts, options )
+
+      vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
+
+      expect( vagrantfile ).not_to match(/v.vm.synced_folder '', '', create: true/)
+      expect( vagrantfile ).not_to match(/v.vm.synced_folder '\/invalid2', '', create: true/)
+      expect( vagrantfile ).not_to match(/v.vm.synced_folder '', '\/invalid3', create: true/)
+      expect( vagrantfile ).to match(/v.vm.synced_folder '\/valid', '\/valid', create: true/)
     end
 
     context "when generating a windows config" do
