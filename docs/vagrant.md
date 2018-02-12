@@ -158,6 +158,27 @@ When using the Vagrant Hypervisor, beaker can create the Vagrantfile to forward 
 
 In the above, beaker will forward port 10080 and 8080 on the Host to port 80 and 8080 (respectively) on the Agent guest.
 
+### Volumes Support
+
+When using the Vagrant Hypervisor, beaker can create attached volumes which appear as extra disks on the guest. The size of the volume should be specified in megabytes.
+
+**Example hosts file**
+
+    HOSTS:
+      ubuntu-1404-x64:
+        roles:
+          - master
+          - agent
+          - dashboard
+          - cloudpro
+        platform: ubuntu-1404-x86_64
+        hypervisor: vagrant
+        box: puppetlabs/ubuntu-14.04-64-nocm
+        box_url: https://vagrantcloud.com/puppetlabs/boxes/ubuntu-14.04-64-nocm
+        volumes:
+          second_disk:
+            size: 5120
+
 # vagrant plugins #
 
 You can check more information for some suported vagrant plugins:
