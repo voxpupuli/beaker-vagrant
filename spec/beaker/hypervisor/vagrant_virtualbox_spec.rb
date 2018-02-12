@@ -41,4 +41,14 @@ describe Beaker::VagrantVirtualbox do
 
   end
 
+  it "can enable ioapic(multiple cores) on hosts" do 
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    hosts = make_hosts({:ioapic => 'true'},1)
+
+    vagrant.make_vfile( hosts )
+
+    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
+    expect( vagrantfile ).to include( %Q{ vb.customize ["modifyvm", :id, "--ioapic", "on"]})
+  end
+
 end
