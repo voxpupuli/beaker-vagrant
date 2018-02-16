@@ -160,7 +160,7 @@ In the above, beaker will forward port 10080 and 8080 on the Host to port 80 and
 
 ### Volumes Support
 
-When using the Vagrant Hypervisor, beaker can create attached volumes which appear as extra disks on the guest. The size of the volume should be specified in megabytes.
+When using the Vagrant Hypervisor, beaker can create attached volumes which appear as extra disks on the guest. The size of the volume should be specified in megabytes. You can override the type of storage controller used to attach the disk by specifying `volume_storage_controller` with values of `AHCI`, `LSILogic`, `USB`, or `PIIX4`.
 
 **Example hosts file**
 
@@ -178,6 +178,7 @@ When using the Vagrant Hypervisor, beaker can create attached volumes which appe
         volumes:
           second_disk:
             size: 5120
+        volume_storage_controller: USB
 
 # vagrant plugins #
 

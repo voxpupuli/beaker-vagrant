@@ -1,6 +1,14 @@
 require 'beaker/hypervisor/vagrant'
 
 class Beaker::VagrantVirtualbox < Beaker::Vagrant
+
+  CONTROLLER_OPTIONS = {
+    LSILogic: [ '--add', 'scsi', '--portcount', '16', '--controller', 'LSILogic', '--bootable', 'off' ],
+    IntelAHCI: [ '--add', 'sata', '--portcount', '2', '--controller', 'IntelAHCI', '--bootable', 'off' ],
+    PIIX4: [ '--add', 'ide', '--portcount', '2', '--controller', 'PIIX4', '--bootable', 'off' ],
+    USB: [ '--add', 'usb', '--portcount', '8', '--controller', 'USB', '--bootable', 'off' ]
+  }.freeze
+
   def provision(provider = 'virtualbox')
     super
   end
@@ -23,20 +31,21 @@ class Beaker::VagrantVirtualbox < Beaker::Vagrant
     provider_section << "      vb.vbguest.auto_update = false" if options[:vbguest_plugin] == 'disable'
 
     # Guest volume support
-    # - Creates a new AHCI controller with the requisite number of ports,
-    #   the default controller is limited in its number of supported ports (2).
-    #   The AHCI emulation is generic enough for acceptance testing, and
-    #   presents the devices as SCSI devices in /sys/class/scsi_disk.
+    # - Creates a new controller (AHCI by default)
     # - Creates the defined volumes in beaker's temporary folder and attaches
     #   them to the controller in order starting at port 0.  This presents disks
     #   as 2:0:0:0, 3:0:0:0 ... much like you'd see on commercial storage boxes
     if host['volumes']
+      controller = host['volume_storage_controller'].nil? ? 'IntelAHCI' : host['volume_storage_controller']
+      unless CONTROLLER_OPTIONS.keys.include? controller.to_sym
+        raise "Unknown controller type #{controller}"
+      end
+      if controller == 'USB'
+        provider_section << self.vb_customize_vm('modifyvm', [ '--usb', 'on' ])
+      end
       provider_section << self.vb_customize_vm('storagectl', [
-        '--name', 'SATA Controller',
-        '--add', 'sata',
-        '--controller', 'IntelAHCI',
-        '--portcount', host['volumes'].length
-      ])
+        '--name', "Beaker #{controller} Controller" ] + CONTROLLER_OPTIONS[controller.to_sym]
+      )
       host['volumes'].keys.each_with_index do |volume, index|
         volume_path = "#{host.name}-#{volume}.vdi"
         provider_section << self.vb_customize('createhd', [
@@ -44,7 +53,7 @@ class Beaker::VagrantVirtualbox < Beaker::Vagrant
           '--size', host['volumes'][volume]['size'],
         ])
         provider_section << self.vb_customize_vm('storageattach', [
-          '--storagectl', 'SATA Controller',
+          '--storagectl', "Beaker #{controller} Controller",
           '--port', index,
           '--device', 0,
           '--type', 'hdd',

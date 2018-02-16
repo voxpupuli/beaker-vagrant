@@ -51,4 +51,37 @@ describe Beaker::VagrantVirtualbox do
     expect( vagrantfile ).to include( %Q{ vb.customize ["modifyvm", :id, "--ioapic", "on"]})
   end
 
+  it "correctly provisions storage with the USB controller" do
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    hosts = make_hosts({:volumes => { 'test_disk' => { size: '5120' }}, :volume_storage_controller => 'USB' })
+
+    vagrant.make_vfile( hosts )
+    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
+    expect( vagrantfile ).to include(%Q{ vb.customize ['modifyvm', :id, '--usb', 'on']})
+    expect( vagrantfile ).to include(%Q{ vb.customize ['storagectl', :id, '--name', 'Beaker USB Controller', '--add', 'usb', '--portcount', '8', '--controller', 'USB', '--bootable', 'off']})
+    expect( vagrantfile ).to include(%Q{ vb.customize ['createhd', '--filename', 'vm1-test_disk.vdi', '--size', '5120']})
+    expect( vagrantfile ).to include(%Q{ vb.customize ['storageattach', :id, '--storagectl', 'Beaker USB Controller', '--port', '0', '--device', '0', '--type', 'hdd', '--medium', 'vm1-test_disk.vdi']})
+  end
+
+  it "correctly provisions storage with the LSILogic controller" do
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    hosts = make_hosts({:volumes => { 'test_disk' => { size: '5120' }}, :volume_storage_controller => 'LSILogic' })
+
+    vagrant.make_vfile( hosts )
+    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
+    expect( vagrantfile ).to include(%Q{ vb.customize ['storagectl', :id, '--name', 'Beaker LSILogic Controller', '--add', 'scsi', '--portcount', '16', '--controller', 'LSILogic', '--bootable', 'off']})
+    expect( vagrantfile ).to include(%Q{ vb.customize ['createhd', '--filename', 'vm1-test_disk.vdi', '--size', '5120']})
+    expect( vagrantfile ).to include(%Q{ vb.customize ['storageattach', :id, '--storagectl', 'Beaker LSILogic Controller', '--port', '0', '--device', '0', '--type', 'hdd', '--medium', 'vm1-test_disk.vdi']})
+  end
+
+  it "correctly provisions storage with the default controller" do
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    hosts = make_hosts({:volumes => { 'test_disk' => { size: '5120' }}})
+
+    vagrant.make_vfile( hosts )
+    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
+    expect( vagrantfile ).to include(%Q{ vb.customize ['storagectl', :id, '--name', 'Beaker IntelAHCI Controller', '--add', 'sata', '--portcount', '2', '--controller', 'IntelAHCI', '--bootable', 'off']})
+    expect( vagrantfile ).to include(%Q{ vb.customize ['createhd', '--filename', 'vm1-test_disk.vdi', '--size', '5120']})
+    expect( vagrantfile ).to include(%Q{ vb.customize ['storageattach', :id, '--storagectl', 'Beaker IntelAHCI Controller', '--port', '0', '--device', '0', '--type', 'hdd', '--medium', 'vm1-test_disk.vdi']})
+  end
 end
