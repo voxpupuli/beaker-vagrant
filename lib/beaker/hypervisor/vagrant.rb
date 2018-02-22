@@ -23,11 +23,14 @@ module Beaker
       private_network_string = "    v.vm.network :private_network, ip: \"#{host['ip'].to_s}\", :netmask => \"#{host['netmask'] ||= "255.255.0.0"}\""
       case host['network_mac']
       when 'false'
+        @mac = randmac
         private_network_string << "\n"
       when nil
-        private_network_string << ", :mac => \"#{randmac}\"\n"
+        @mac = randmac
+        private_network_string << ", :mac => \"#{@mac}\"\n"
       else
-        private_network_string << ", :mac => \"#{host['network_mac']}\"\n"
+        @mac = host['network_mac']
+        private_network_string << ", :mac => \"#{@mac}\"\n"
       end
     end
 
@@ -103,6 +106,7 @@ module Beaker
           else
             v_file << "    v.vm.synced_folder '.', '/vagrant', :nfs => true\n"
           end
+          v_file << "    v.vm.base_mac = '#{@mac}'\n"
         end
 
         v_file << self.class.provider_vfile_section(host, options)

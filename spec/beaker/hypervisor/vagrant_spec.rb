@@ -187,6 +187,30 @@ EOF
       end
     end
 
+    context 'when generating a freebsd config' do
+      before do
+        path = vagrant.instance_variable_get( :@vagrant_path )
+        allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
+        @hosts[0][:platform] = 'freebsd'
+
+        vagrant.make_vfile( @hosts )
+
+        @generated_file = File.read( File.expand_path( File.join( path, "Vagrantfile") ) )
+      end
+
+      it 'has the proper ssh shell' do
+        expect( @generated_file ).to match /v.ssh.shell = 'sh'\n/
+      end
+
+      it 'has the proper guest setting' do
+        expect( @generated_file ).to match /v.vm.guest = :freebsd\n/
+      end
+
+      it 'sets the vm.base_mac setting' do
+        expect( @generated_file ).to match /v.vm.base_mac = '0123456789'\n/
+      end
+    end
+
     it "uses the memsize defined per vagrant host" do
       path = vagrant.instance_variable_get( :@vagrant_path )
       allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
