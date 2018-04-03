@@ -3,6 +3,7 @@ require 'open3'
 module Beaker
   class Vagrant < Beaker::Hypervisor
 
+    require 'beaker/hypervisor/vagrant/mount_folder'
     require 'beaker/hypervisor/vagrant_virtualbox'
     # Return a random mac address
     #
@@ -53,8 +54,9 @@ module Beaker
 
         unless host['mount_folders'].nil?
           host['mount_folders'].each do |name, folder|
-            unless folder[:from].nil? or folder[:to].nil?
-              v_file << "    v.vm.synced_folder '#{folder[:from]}', '#{folder[:to]}', create: true\n"
+            mount_folder = Vagrant::MountFolder.new(name, folder)
+            if mount_folder.required_keys_present?
+              v_file << "    v.vm.synced_folder '#{mount_folder.from}', '#{mount_folder.to}', create: true\n"
             else
               @logger.warn "Using 'mount_folders' requires options 'from' and 'to' for vagrant node, given #{folder.inspect}"
             end

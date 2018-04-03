@@ -159,7 +159,7 @@ EOF
       expect( vagrantfile ).to match(/v.vm.network :private_network, ip: "ip.address.for.vm1", :netmask => "255.255.0.0"/)
     end
 
-    it "can make a Vagrantfile with inproper keys for synced folders" do
+    it "can make a Vagrantfile with improper keys for synced folders" do
       path = vagrant.instance_variable_get( :@vagrant_path )
 
       hosts = make_hosts({:mount_folders => {
