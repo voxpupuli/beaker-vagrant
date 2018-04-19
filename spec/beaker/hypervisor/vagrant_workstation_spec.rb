@@ -29,4 +29,34 @@ describe Beaker::VagrantWorkstation do
     vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
     expect( vagrantfile ).to include( %Q{    v.vm.provider :vmware_workstation do |v|\n      v.vmx['memsize'] = '1024'\n    end})
   end
+
+  it "can enable whitelist_verified on hosts" do 
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    hosts = make_hosts({:whitelist_verified => true},1)
+
+    vagrant.make_vfile( hosts )
+
+    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
+    expect( vagrantfile ).to include( %Q{ v.vmx['whitelist_verified'] = 'true'})
+  end
+
+  it "can enable functional_hgfs on hosts" do 
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    hosts = make_hosts({:functional_hgfs => true},1)
+
+    vagrant.make_vfile( hosts )
+
+    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
+    expect( vagrantfile ).to include( %Q{ v.vmx['functional_hgfs'] = 'true'})
+  end
+
+  it "can enable unmount_default_hgfs on hosts" do 
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    hosts = make_hosts({:unmount_default_hgfs => true},1)
+
+    vagrant.make_vfile( hosts )
+
+    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
+    expect( vagrantfile ).to include( %Q{ v.vmx['unmount_default_hgfs'] = 'true'})
+  end
 end
