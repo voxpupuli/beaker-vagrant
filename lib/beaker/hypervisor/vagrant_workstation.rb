@@ -7,7 +7,7 @@ class Beaker::VagrantWorkstation < Beaker::Vagrant
 
   def self.provider_vfile_section(host, options)   
     v_provider = "    v.vm.provider :vmware_workstation do |v|\n"
-    v_provider <<  "      v.vmx['gui'] = true\n" if options[:gui] == true
+    v_provider <<  "      v.vmx['gui'] = true\n" if host['gui'] == true
     v_provider <<  "      v.vmx['memsize'] = '#{memsize(host,options)}'\n"
     v_provider <<  "      v.vmx['whitelist_verified'] = '#{host['whitelist_verified']}'\n" unless host['whitelist_verified'].nil?
     v_provider <<  "      v.vmx['functional_hgfs'] = '#{host['functional_hgfs']}'\n" unless host['functional_hgfs'].nil?

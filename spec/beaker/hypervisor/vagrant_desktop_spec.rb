@@ -59,4 +59,14 @@ describe Beaker::VagrantDesktop do
     vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
     expect( vagrantfile ).to include( %Q{ v.vmx['unmount_default_hgfs'] = 'true'})
   end
+
+  it "can enable gui on hosts" do 
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    hosts = make_hosts({:gui => true},1)
+
+    vagrant.make_vfile( hosts )
+
+    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
+    expect( vagrantfile ).to include( %Q{ v.vmx['gui'] = true})
+  end
 end
