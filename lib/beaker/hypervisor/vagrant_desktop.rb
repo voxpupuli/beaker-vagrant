@@ -1,12 +1,12 @@
 require 'beaker/hypervisor/vagrant'
 
-class Beaker::VagrantWorkstation < Beaker::Vagrant
-  def provision(provider = 'vmware_workstation')
+class Beaker::VagrantDesktop < Beaker::Vagrant
+  def provision(provider = 'vmware_desktop')
     super
   end
 
   def self.provider_vfile_section(host, options)   
-    v_provider = "    v.vm.provider :vmware_workstation do |v|\n"
+    v_provider = "    v.vm.provider :vmware_desktop do |v|\n"
     v_provider <<  "      v.vmx['gui'] = true\n" if host['gui'] == true
     v_provider <<  "      v.vmx['memsize'] = '#{memsize(host,options)}'\n"
     v_provider <<  "      v.vmx['whitelist_verified'] = '#{host['whitelist_verified']}'\n" unless host['whitelist_verified'].nil?

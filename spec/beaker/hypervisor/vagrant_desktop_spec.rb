@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe Beaker::VagrantWorkstation do
+describe Beaker::VagrantDesktop do
   let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double().as_null_object }) }
-  let( :vagrant ) { Beaker::VagrantWorkstation.new( @hosts, options ) }
+  let( :vagrant ) { Beaker::VagrantDesktop.new( @hosts, options ) }
 
   before :each do
     @hosts = make_hosts()
   end
 
-  it "uses the vmware_workstation provider for provisioning" do
+  it "uses the vmware_desktop provider for provisioning" do
     @hosts.each do |host|
       host_prev_name = host['user']
       expect( vagrant ).to receive( :set_ssh_config ).with( host, 'vagrant' ).once
@@ -16,7 +16,7 @@ describe Beaker::VagrantWorkstation do
       expect( vagrant ).to receive( :set_ssh_config ).with( host, host_prev_name ).once
     end
     expect( vagrant ).to receive( :hack_etc_hosts ).with( @hosts, options ).once
-    expect( vagrant ).to receive( :vagrant_cmd ).with( "up --provider vmware_workstation" ).once
+    expect( vagrant ).to receive( :vagrant_cmd ).with( "up --provider vmware_desktop" ).once
     vagrant.provision
   end
 
@@ -27,7 +27,7 @@ describe Beaker::VagrantWorkstation do
     vagrant.make_vfile( @hosts )
 
     vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
-    expect( vagrantfile ).to include( %Q{    v.vm.provider :vmware_workstation do |v|\n      v.vmx['memsize'] = '1024'\n    end})
+    expect( vagrantfile ).to include( %Q{    v.vm.provider :vmware_desktop do |v|\n      v.vmx['memsize'] = '1024'\n    end})
   end
 
   it "can enable whitelist_verified on hosts" do 
