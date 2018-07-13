@@ -1,21 +1,29 @@
 # Vagrant
 
-Vagrant's slogan is "development environments made easy". They provide an
+Vagrant's slogan is "development environments made easy". Vagrant provides an
 abstraction on top of a VM or cloud provider that allows you to manage
-hosts and their provisioning. [Their Site](https://www.vagrantup.com/).
+hosts and their provisioning. <https://www.vagrantup.com/>.
 
-# Getting Started
+## Getting Started
 
 ### Requirements
 
 A prerequisite for using the vagrant hypervisor with beaker is that the
-**Vagrant 1.7+** package needs to installed - 
-see [downloads.vagrantup.com](http://downloads.vagrantup.com/) for downloads.
+`Vagrant` package, minimum version 1.7, needs to installed. Version 2.1.2 (latest as of time of writing) has been tested. See [downloads.vagrantup.com](http://downloads.vagrantup.com/) for downloads or install with Homebrew:
 
-Currently, we provide a suite of pre-built, publicly available vagrant boxes for
-use in constructing tests: [Puppet Labs Vagrant Boxes](https://vagrantcloud.com/puppetlabs/).
-You can use these boxes easily by pulling one of our
-[Example Vagrant Hosts Files](vagrant_hosts_file_examples.md).
+~~~console
+$ brew install cask vagrant
+~~~
+
+You will also need a virtualization provider. Beaker-vagrant is most commonly used as an interface to VirtualBox, so you'll also need that:
+
+~~~console
+$ brew install cask virtualbox
+~~~
+
+Historically, we provided a suite of pre-built, publicly available Vagrant boxes for use in constructing tests: [Puppet Labs Vagrant Boxes](https://vagrantcloud.com/puppetlabs/). However, these boxes have not been updated recently and *will* have issues (ex: outdated cURL on CentOS). You can use these easily by pulling one of our [Example Vagrant Hosts Files](vagrant_hosts_file_examples.md), but this should be avoided if possible.
+
+For acceptance testing of beaker-vagrant, we use [the official CentOS 7 box](https://app.vagrantup.com/centos/boxes/7).
 
 ### Setup a Vagrant Hosts File
 
