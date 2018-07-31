@@ -188,6 +188,29 @@ When using the Vagrant Hypervisor, beaker can create attached volumes which appe
             size: 5120
         volume_storage_controller: USB
 
+### Adding vagrant shell provisioner
+
+When using the Vagrant Hypervisor, beaker can create the Vagrantfile with a shell provisioner. This is done by using the `shell_provisioner` option in the nodeset file.
+
+**Example hosts file**
+
+    HOSTS:
+      ubuntu-1404-x64-master:
+        roles:
+          - master
+          - agent
+          - dashboard
+          - database
+        platform: ubuntu-1404-x86_64
+        hypervisor: vagrant
+        box: puppetlabs/ubuntu-14.04-64-nocm
+        box_url: https://vagrantcloud.com/puppetlabs/boxes/ubuntu-14.04-64-nocm
+        ip: 192.168.20.20
+        shell_provisioner:
+          path: /home/user/scripts/bootstrap.sh
+
+In the above, beaker will create a Vagrantfile which runs the above shell script on the Agent guest.
+
 # vagrant plugins #
 
 You can check more information for some suported vagrant plugins:

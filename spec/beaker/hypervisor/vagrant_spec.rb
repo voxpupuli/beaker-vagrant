@@ -178,6 +178,43 @@ EOF
       expect( vagrantfile ).to match(/v.vm.synced_folder '\/valid', '\/valid', create: true/)
     end
 
+    it "can make a Vagrantfile with optional shell provisioner" do
+      path = vagrant.instance_variable_get( :@vagrant_path )
+      allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
+
+      shell_path = '/path/to/shell/script'
+      hosts = make_hosts({
+        :shell_provisioner => {
+          :path => shell_path
+        }
+      }, 1)
+      vagrant.make_vfile( hosts, options )
+
+      vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
+      expect( vagrantfile ).to match(/v.vm.provision 'shell', :path => '#{shell_path}'/)
+    end
+
+    it "raises an error if path is not set on shell_provisioner" do
+      path = vagrant.instance_variable_get( :@vagrant_path )
+      allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
+
+      hosts = make_hosts({:shell_provisioner => {}}, 1)
+      expect{ vagrant.make_vfile( hosts, options ) }.to raise_error RuntimeError, /No path defined for shell_provisioner or path empty/
+    end
+
+    it "raises an error if path is EMPTY on shell_provisioner" do
+      path = vagrant.instance_variable_get( :@vagrant_path )
+      allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
+
+      empty_shell_path = ''
+      hosts = make_hosts({
+        :shell_provisioner => {
+          :path => empty_shell_path
+        }
+      }, 1)
+      expect{ vagrant.make_vfile( hosts, options ) }.to raise_error RuntimeError, /No path defined for shell_provisioner or path empty/
+    end
+
     context "when generating a windows config" do
       before do
         path = vagrant.instance_variable_get( :@vagrant_path )
