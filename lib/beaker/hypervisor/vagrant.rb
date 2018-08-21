@@ -37,7 +37,11 @@ module Beaker
 
     def shell_provisioner_generator(provisioner_config)
       unless provisioner_config['path'].nil? || provisioner_config['path'].empty?
-        shell_provisioner_string = "    v.vm.provision 'shell', :path => '#{provisioner_config['path']}'\n"
+        unless provisioner_config['args'].nil?
+          shell_provisioner_string = "    v.vm.provision 'shell', :path => '#{provisioner_config['path']}', :args => '#{provisioner_config['args']}' \n"
+        else
+          shell_provisioner_string = "    v.vm.provision 'shell', :path => '#{provisioner_config['path']}'\n"
+        end
         shell_provisioner_string
       else
         raise "No path defined for shell_provisioner or path empty"
@@ -62,7 +66,6 @@ module Beaker
         v_file << "    v.vm.box_download_insecure = '#{host['box_download_insecure']}'\n" unless host['box_download_insecure'].nil?
         v_file << "    v.vm.box_check_update = '#{host['box_check_update'] ||= 'true'}'\n"
         v_file << "    v.vm.synced_folder '.', '/vagrant', disabled: true\n" if host['synced_folder'] == 'disabled'
-        v_file << "    v.vm.provision 'shell', :path => '#{host['shell_provisioner']['path']}'\n" unless host['shell_provisioner'].nil?
         v_file << shell_provisioner_generator(host['shell_provisioner']) if host['shell_provisioner']
         v_file << private_network_generator(host)
 

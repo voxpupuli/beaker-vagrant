@@ -194,6 +194,24 @@ EOF
       expect( vagrantfile ).to match(/v.vm.provision 'shell', :path => '#{shell_path}'/)
     end
 
+    it "can make a Vagrantfile with optional shell provisioner with args" do
+      path = vagrant.instance_variable_get( :@vagrant_path )
+      allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
+
+      shell_path = '/path/to/shell/script.sh'
+      shell_args = 'arg1 arg2'
+      hosts = make_hosts({
+        :shell_provisioner => {
+          :path => shell_path,
+          :args => shell_args
+        }
+      }, 1)
+      vagrant.make_vfile( hosts, options )
+
+      vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
+      expect( vagrantfile ).to match(/v.vm.provision 'shell', :path => '#{shell_path}', :args => '#{shell_args}'/)
+    end
+
     it "raises an error if path is not set on shell_provisioner" do
       path = vagrant.instance_variable_get( :@vagrant_path )
       allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
