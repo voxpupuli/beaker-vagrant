@@ -444,39 +444,58 @@ EOF
       end
     end
 
-    it "can generate a ssh-config file" do
-      host = @hosts[0]
-      name = host.name
-      allow( Dir ).to receive( :chdir ).and_yield()
-      out = double( 'stdout' )
-      allow( out ).to receive( :read ).and_return("Host #{name}
-    HostName 127.0.0.1
-    User vagrant
-    Port 2222
-    UserKnownHostsFile /dev/null
-    StrictHostKeyChecking no
-    PasswordAuthentication no
-    IdentityFile /home/root/.vagrant.d/insecure_private_key
-    IdentitiesOnly yes")
+    describe "set_ssh_config" do
+      let( :out ) { double( 'stdout' ) }
+      let( :host ) { @hosts[0] }
+      let( :name ) { host.name }
+      let( :file ) { double( 'file' ) }
 
-      wait_thr = OpenStruct.new
-      state = double( 'state' )
-      allow( state ).to receive( :success? ).and_return( true )
-      wait_thr.value = state
+      before :each do
+        allow( Dir ).to receive( :chdir ).and_yield()
+        wait_thr = OpenStruct.new
+        state = double( 'state' )
+        allow( state ).to receive( :success? ).and_return( true )
+        wait_thr.value = state
 
-      allow( Open3 ).to receive( :popen3 ).with( {"RUBYLIB"=>""}, 'vagrant', 'ssh-config', name ).and_return( [ "", out, "", wait_thr ])
+        allow( Open3 ).to receive( :popen3 ).with( {"RUBYLIB"=>""}, 'vagrant', 'ssh-config', name ).and_return( [ "", out, "", wait_thr ])
 
-      file = double( 'file' )
-      allow( file ).to receive( :path ).and_return( '/path/sshconfig' )
-      allow( file ).to receive( :rewind ).and_return( true )
+        allow( file ).to receive( :path ).and_return( '/path/sshconfig' )
+        allow( file ).to receive( :rewind ).and_return( true )
 
-      expect( Tempfile ).to receive( :new ).with( "#{host.name}").and_return( file )
-      expect( file ).to receive( :write ).with("Host ip.address.for.#{name}\n    HostName 127.0.0.1\n    User root\n    Port 2222\n    UserKnownHostsFile /dev/null\n    StrictHostKeyChecking no\n    PasswordAuthentication no\n    IdentityFile /home/root/.vagrant.d/insecure_private_key\n    IdentitiesOnly yes")
+        allow( out ).to receive( :read ).and_return("Host #{name}
+        HostName 127.0.0.1
+        User vagrant
+        Port 2222
+        UserKnownHostsFile /dev/null
+        StrictHostKeyChecking no
+        PasswordAuthentication no
+        IdentityFile /home/root/.vagrant.d/insecure_private_key
+        IdentitiesOnly yes")
+      end
 
-      vagrant.set_ssh_config( host, 'root' )
-      expect( host['ssh'] ).to be === { :config => file.path }
-      expect( host['user']).to be === 'root'
+      it "can generate a ssh-config file" do
+       expect( Tempfile ).to receive( :new ).with( "#{host.name}").and_return( file )
+        expect( file ).to receive( :write ).with("Host ip.address.for.#{name}\n        HostName 127.0.0.1\n        User root\n        Port 2222\n        UserKnownHostsFile /dev/null\n        StrictHostKeyChecking no\n        PasswordAuthentication no\n        IdentityFile /home/root/.vagrant.d/insecure_private_key\n        IdentitiesOnly no")
 
+        vagrant.set_ssh_config( host, 'root' )
+        expect( host['ssh'] ).to be === { :config => file.path }
+        expect( host['user']).to be === 'root'
+      end
+
+      context "when :forward_ssh_agent is false" do
+        it "should not change IdentitiesOnly to no" do
+          options = vagrant.instance_variable_get( :@options )
+          options['forward_ssh_agent'] = false
+          options = vagrant.instance_variable_set( :@options, options )
+
+          expect( Tempfile ).to receive( :new ).with( "#{host.name}").and_return( file )
+          expect( file ).to receive( :write ).with("Host ip.address.for.#{name}\n        HostName 127.0.0.1\n        User root\n        Port 2222\n        UserKnownHostsFile /dev/null\n        StrictHostKeyChecking no\n        PasswordAuthentication no\n        IdentityFile /home/root/.vagrant.d/insecure_private_key\n        IdentitiesOnly yes")
+
+          vagrant.set_ssh_config( host, 'root' )
+          expect( host['ssh'] ).to be === { :config => file.path }
+          expect( host['user']).to be === 'root'
+        end
+      end
     end
 
     describe "get_ip_from_vagrant_file" do

@@ -159,6 +159,11 @@ module Beaker
 
         #set the user
         ssh_config = ssh_config.gsub(/User vagrant/, "User #{user}")
+
+        if @options[:forward_ssh_agent] == true
+          ssh_config = ssh_config.gsub(/IdentitiesOnly yes/, "IdentitiesOnly no")
+        end
+
         f.write(ssh_config)
         f.rewind
         host['ssh'] = {:config => f.path()}
