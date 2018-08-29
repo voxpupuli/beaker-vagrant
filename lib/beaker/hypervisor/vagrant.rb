@@ -35,6 +35,19 @@ module Beaker
       end
     end
 
+    def shell_provisioner_generator(provisioner_config)
+      unless provisioner_config['path'].nil? || provisioner_config['path'].empty?
+        unless provisioner_config['args'].nil?
+          shell_provisioner_string = "    v.vm.provision 'shell', :path => '#{provisioner_config['path']}', :args => '#{provisioner_config['args']}' \n"
+        else
+          shell_provisioner_string = "    v.vm.provision 'shell', :path => '#{provisioner_config['path']}'\n"
+        end
+        shell_provisioner_string
+      else
+        raise "No path defined for shell_provisioner or path empty"
+      end
+    end
+
     def make_vfile hosts, options = {}
       #HACK HACK HACK - add checks here to ensure that we have box + box_url
       #generate the VagrantFile
@@ -53,6 +66,7 @@ module Beaker
         v_file << "    v.vm.box_download_insecure = '#{host['box_download_insecure']}'\n" unless host['box_download_insecure'].nil?
         v_file << "    v.vm.box_check_update = '#{host['box_check_update'] ||= 'true'}'\n"
         v_file << "    v.vm.synced_folder '.', '/vagrant', disabled: true\n" if host['synced_folder'] == 'disabled'
+        v_file << shell_provisioner_generator(host['shell_provisioner']) if host['shell_provisioner']
         v_file << private_network_generator(host)
 
         unless host['mount_folders'].nil?
@@ -145,6 +159,11 @@ module Beaker
 
         #set the user
         ssh_config = ssh_config.gsub(/User vagrant/, "User #{user}")
+
+        if @options[:forward_ssh_agent] == true
+          ssh_config = ssh_config.gsub(/IdentitiesOnly yes/, "IdentitiesOnly no")
+        end
+
         f.write(ssh_config)
         f.rewind
         host['ssh'] = {:config => f.path()}
