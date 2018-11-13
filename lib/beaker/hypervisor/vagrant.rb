@@ -145,6 +145,32 @@ module Beaker
       Beaker::VagrantVirtualbox.provider_vfile_section(host, options)
     end
 
+    def set_all_ssh_config
+      @logger.debug "configure vagrant boxes (set ssh-config, switch to root user, hack etc/hosts)"
+      @hosts.each do |host|
+        if host[:platform] =~ /windows/
+          @logger.debug "skip ssh hacks on windows box #{host[:name]}"
+          set_ssh_config host, host['user']
+          next
+        end
+
+        default_user = host['user']
+
+        set_ssh_config host, 'vagrant'
+
+        #copy vagrant's keys to roots home dir, to allow for login as root
+        copy_ssh_to_root host, @options
+        #ensure that root login is enabled for this host
+        enable_root_login host, @options
+        #shut down connection, will reconnect on next exec
+        host.close
+
+        set_ssh_config host, default_user
+      end
+
+      hack_etc_hosts @hosts, @options
+    end
+
     def set_ssh_config host, user
         f = Tempfile.new("#{host.name}")
         ssh_config = Dir.chdir(@vagrant_path) do
@@ -201,65 +227,46 @@ module Beaker
       @vagrant_env = { "RUBYLIB" => "" }
     end
 
-    def provision(provider = nil)
-      if !@options[:provision] and !File.file?(@vagrant_file)
-        raise "Beaker is configured with provision = false but no vagrant file was found at #{@vagrant_file}. You need to enable provision"
-      end
-      if @options[:provision]
-        #setting up new vagrant hosts
-        #make sure that any old boxes are dead dead dead
-        begin
-          vagrant_cmd("destroy --force") if File.file?(@vagrant_file)
-        rescue RuntimeError => e
-          # LATER: use <<~MESSAGE once we're on Ruby 2.3
-          @logger.debug(%Q{
-            Beaker failed to destroy the existing VM's. If you think this is
-            an error or you upgraded from an older version of beaker try
-            verifying the VM exists and deleting the existing Vagrantfile if
-            you believe it is safe to do so. WARNING: If a VM still exists
-            please run 'vagrant destroy'.
-
-            cd #{@vagrant_path}
-            vagrant status
-            vagrant destroy # only need to run this is a VM is not created
-            rm #{@vagrant_file} # only do this if all VM's are actually destroyed
-          }.each_line.map(&:strip).join("\n"))
-          raise e
+    def configure(opts = {})
+      if !@options[:provision]
+        if !File.file?(@vagrant_file)
+          raise "Beaker is configured with provision = false but no vagrant file was found at #{@vagrant_file}. You need to enable provision"
         end
 
-        make_vfile @hosts, @options
-
-        vagrant_cmd("up#{" --provider #{provider}" if provider}")
-      else #set host ip of already up boxes
         @hosts.each do |host|
           host[:ip] = get_ip_from_vagrant_file(host.name)
         end
+
+        set_all_ssh_config
+      end
+    end
+
+    def provision(provider = nil)
+      #setting up new vagrant hosts
+      #make sure that any old boxes are dead dead dead
+      begin
+        vagrant_cmd("destroy --force") if File.file?(@vagrant_file)
+      rescue RuntimeError => e
+        # LATER: use <<~MESSAGE once we're on Ruby 2.3
+        @logger.debug(%Q{
+          Beaker failed to destroy the existing VM's. If you think this is
+          an error or you upgraded from an older version of beaker try
+          verifying the VM exists and deleting the existing Vagrantfile if
+          you believe it is safe to do so. WARNING: If a VM still exists
+          please run 'vagrant destroy'.
+          cd #{@vagrant_path}
+          vagrant status
+          vagrant destroy # only need to run this is a VM is not created
+          rm #{@vagrant_file} # only do this if all VM's are actually destroyed
+        }.each_line.map(&:strip).join("\n"))
+        raise e
       end
 
-      @logger.debug "configure vagrant boxes (set ssh-config, switch to root user, hack etc/hosts)"
-      @hosts.each do |host|
-        if host[:platform] =~ /windows/
-          @logger.debug "skip ssh hacks on windows box #{host[:name]}"
-          set_ssh_config host, host['user']
-          next
-        end
+      make_vfile @hosts, @options
 
-        default_user = host['user']
+      vagrant_cmd("up#{" --provider #{provider}" if provider}")
 
-        set_ssh_config host, 'vagrant'
-
-        #copy vagrant's keys to roots home dir, to allow for login as root
-        copy_ssh_to_root host, @options
-        #ensure that root login is enabled for this host
-        enable_root_login host, @options
-        #shut down connection, will reconnect on next exec
-        host.close
-
-        set_ssh_config host, default_user
-      end
-
-      hack_etc_hosts @hosts, @options
-
+      set_all_ssh_config
     end
 
     def cleanup

@@ -498,6 +498,69 @@ EOF
       end
     end
 
+    context 'with options[:provision] = false' do
+      let(:options) { super().merge(provision: false) }
+
+      context 'when Vagrantfile does not exist' do
+        it 'raises an error' do
+          expect { vagrant.configure }.to raise_error RuntimeError, /no vagrant file was found/
+        end
+      end
+
+      it 'calls #get_ip_from_vagrant_file' do
+        vagrant.make_vfile(@hosts)
+
+        @hosts.each do |host|
+          allow(vagrant).to receive(:set_ssh_config).with(host, anything)
+          expect(vagrant).to receive(:get_ip_from_vagrant_file).with(host.name)
+        end
+
+        vagrant.configure
+      end
+
+      it 'calls #set_all_ssh_config' do
+        vagrant.make_vfile(@hosts)
+        expect(vagrant).to receive(:set_all_ssh_config)
+        vagrant.configure
+      end
+    end
+
+    describe '#set_all_ssh_config' do
+      before do
+        allow(vagrant).to receive(:set_ssh_config)
+      end
+
+      it 'calls #set_ssh_config' do
+        @hosts.each do |host|
+          expect(vagrant).to receive(:set_ssh_config).with(host, 'vagrant')
+          expect(vagrant).to receive(:set_ssh_config).with(host, host['user'])
+        end
+
+        vagrant.set_all_ssh_config
+      end
+
+      it 'calls #copy_ssh_to_root' do
+        @hosts.each do |host|
+          expect(vagrant).to receive(:copy_ssh_to_root).with(host, options)
+        end
+
+        vagrant.set_all_ssh_config
+      end
+
+      it 'calls #enable_root_login' do
+        @hosts.each do |host|
+          expect(vagrant).to receive(:enable_root_login).with(host, options)
+        end
+
+        vagrant.set_all_ssh_config
+      end
+
+      it 'calls #hack_etc_hosts' do
+        expect(vagrant).to receive(:hack_etc_hosts).with(@hosts, options)
+        vagrant.set_all_ssh_config
+      end
+    end
+
     describe "get_ip_from_vagrant_file" do
       before :each do
         allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
