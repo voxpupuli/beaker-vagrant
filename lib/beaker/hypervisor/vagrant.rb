@@ -239,6 +239,7 @@ module Beaker
 
         set_all_ssh_config
       end
+      super
     end
 
     def provision(provider = nil)
