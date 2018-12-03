@@ -224,7 +224,7 @@ module Beaker
       @vagrant_path = File.expand_path(File.join(File.basename(__FILE__), '..', '.vagrant', 'beaker_vagrant_files', File.basename(options[:hosts_file])))
       FileUtils.mkdir_p(@vagrant_path)
       @vagrant_file = File.expand_path(File.join(@vagrant_path, "Vagrantfile"))
-      @vagrant_env = { "RUBYLIB" => "" }
+      @vagrant_env = { "RUBYLIB" => "", "RUBYOPT" => "" }
     end
 
     def configure(opts = {})
