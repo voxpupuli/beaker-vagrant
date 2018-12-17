@@ -25,9 +25,10 @@ class Beaker::VagrantVirtualbox < Beaker::Vagrant
 
   def self.provider_vfile_section(host, options)
     # Allow memory and CPUs to be set at a per node level or overall, and take the most specific setting
+    # Removing audio is a workaround of a virtualbox bug that gives error message : "The specified string / bytes buffer was to small"
     provider_section  = ""
     provider_section << "    v.vm.provider :virtualbox do |vb|\n"
-    provider_section << "      vb.customize ['modifyvm', :id, '--memory', '#{memsize(host,options)}', '--cpus', '#{cpus(host,options)}']\n"
+    provider_section << "      vb.customize ['modifyvm', :id, '--memory', '#{memsize(host,options)}', '--cpus', '#{cpus(host,options)}', '--audio', 'none']\n"
     provider_section << "      vb.vbguest.auto_update = false" if options[:vbguest_plugin] == 'disable'
 
     # Guest volume support
