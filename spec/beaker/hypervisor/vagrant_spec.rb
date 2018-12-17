@@ -1,3 +1,4 @@
+require 'beaker/platform'
 require 'spec_helper'
 
 module Beaker
@@ -23,7 +24,8 @@ module Beaker
           :http => {:from => 10080, :to => 80},
           :ssl  => {:from => 4443,  :to => 443},
           :tomcat => {:from => 8080, :to => 8080}
-        }
+        },
+        :platform => Beaker::Platform.new('centos-8-x86_64')
       })
     end
 
