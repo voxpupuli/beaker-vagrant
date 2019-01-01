@@ -60,7 +60,7 @@ Vagrant.configure("2") do |c|
     v.vm.network :forwarded_port, guest: 443, host: 4443
     v.vm.network :forwarded_port, guest: 8080, host: 8080
     v.vm.provider :virtualbox do |vb|
-      vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1']
+      vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1', '--audio', 'none']
     end
   end
   c.vm.define 'vm2' do |v|
@@ -75,7 +75,7 @@ Vagrant.configure("2") do |c|
     v.vm.network :forwarded_port, guest: 443, host: 4443
     v.vm.network :forwarded_port, guest: 8080, host: 8080
     v.vm.provider :virtualbox do |vb|
-      vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1']
+      vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1', '--audio', 'none']
     end
   end
   c.vm.define 'vm3' do |v|
@@ -90,7 +90,7 @@ Vagrant.configure("2") do |c|
     v.vm.network :forwarded_port, guest: 443, host: 4443
     v.vm.network :forwarded_port, guest: 8080, host: 8080
     v.vm.provider :virtualbox do |vb|
-      vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1']
+      vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1', '--audio', 'none']
     end
   end
 end
@@ -295,7 +295,7 @@ EOF
 
       generated_file = File.read( File.expand_path( File.join( path, "Vagrantfile") ) )
 
-      match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', 'hello!', '--cpus', '1'\]/)
+      match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', 'hello!', '--cpus', '1', '--audio', 'none'\]/)
 
       expect( match ).to_not be nil
 
@@ -309,7 +309,7 @@ EOF
 
       generated_file = File.read( File.expand_path( File.join( path, "Vagrantfile") ) )
 
-      match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', '1024', '--cpus', 'goodbye!'\]/)
+      match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', '1024', '--cpus', 'goodbye!', '--audio', 'none'\]/)
 
       expect( match ).to_not be nil
 
