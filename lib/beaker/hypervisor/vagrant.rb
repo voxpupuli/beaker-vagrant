@@ -166,6 +166,14 @@ module Beaker
         host.close
 
         set_ssh_config host, default_user
+
+        #allow the user to set the env
+        begin
+          host.ssh_permit_user_environment
+          host.close
+        rescue ArgumentError => e
+          @logger.debug("Failed to set SshPermitUserEnvironment. #{e}")
+        end
       end
 
       hack_etc_hosts @hosts, @options
