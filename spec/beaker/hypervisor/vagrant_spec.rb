@@ -258,6 +258,10 @@ EOF
         expect( @generated_file ).to match /v.vm.guest = :windows/
       end
 
+      it 'configures the guest type to use winrm' do
+        expect( @generated_file ).to match /v.vm.communicator = 'winrm'/
+      end
+
       it 'sets a non-default memsize' do
         expect( @generated_file ).to match /'--memory', '2048',/
       end
