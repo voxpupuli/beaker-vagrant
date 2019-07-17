@@ -23,6 +23,7 @@ class Beaker::VagrantLibvirt < Beaker::Vagrant
     "    v.vm.provider :libvirt do |node|\n" +
       "      node.cpus = #{cpus(host, options)}\n" +
       "      node.memory = #{memsize(host, options)}\n" +
+      "      node.qemu_use_session = false\n" +
       build_options_str(options) +
       "    end\n"
   end
