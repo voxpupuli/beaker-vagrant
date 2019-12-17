@@ -291,18 +291,25 @@ module Beaker
 
     def vagrant_cmd(args)
       Dir.chdir(@vagrant_path) do
-        exit_status = 1
-        Open3.popen3(@vagrant_env, "vagrant #{args}") {|stdin, stdout, stderr, wait_thr|
-          while line = stdout.gets
-            @logger.info(line)
+        begin
+          retries ||=0
+          Open3.popen3(@vagrant_env, "vagrant #{args}") {|stdin, stdout, stderr, wait_thr|
+            while line = stdout.gets
+              @logger.info(line)
+            end
+
+            unless wait_thr.value.success?
+              raise "Failed to exec 'vagrant #{args}'. Error was #{stderr.read}"
+            end
+          }
+        rescue => e
+          if e =~ /WinRM/m
+            sleep(10)
+
+            retry if (retries += 1) < 6
           end
-          if not wait_thr.value.success?
-            raise "Failed to exec 'vagrant #{args}'. Error was #{stderr.read}"
-          end
-          exit_status = wait_thr.value
-        }
-        if exit_status != 0
-          raise "Failed to execute vagrant_cmd ( #{args} ). Error was #{stderr.read}"
+
+          raise e
         end
       end
     end
