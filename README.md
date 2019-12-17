@@ -40,3 +40,12 @@ bundle exec rake test:acceptance
 # Contributing
 
 Please refer to puppetlabs/beaker's [contributing](https://github.com/puppetlabs/beaker/blob/master/CONTRIBUTING.md) guide.
+
+# Release
+
+To release new versions, we use a
+[Jenkins job](https://jenkins-sre.delivery.puppetlabs.net/view/all/job/qe_beaker-vagrant_init-multijob_master/)
+(access to internal infrastructure will be required to view job).
+
+To release a new version (from the master branch), you'll need to just provide
+a new beaker-pe version number to the job, and you're off to the races.
