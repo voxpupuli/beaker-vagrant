@@ -303,7 +303,7 @@ module Beaker
             end
           }
         rescue => e
-          if e =~ /WinRM/m
+          if e.to_s =~ /WinRM/m
             sleep(10)
 
             retry if (retries += 1) < 6
