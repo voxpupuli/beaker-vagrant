@@ -65,9 +65,9 @@ class Beaker::VagrantVirtualbox < Beaker::Vagrant
 
     provider_section << "      vb.customize [\"modifyvm\", :id, \"--ioapic\", \"on\"]\n" unless host['ioapic'].nil?
 
-    provider_section << "      vb.customize [\"modifyvm\", :id, \"--natdnshostresolver1\", \"#{host['natdns']}\"]\n" unless host['natdns'].nil?
+    provider_section << "      vb.customize [\"modifyvm\", :id, \"--natdnshostresolver1\", \"on\"]\n" unless host['natdns'].nil?
 
-    provider_section << "      vb.customize [\"modifyvm\", :id, \"--natdnsproxy1\", \"#{host['natdns']}\"]\n" unless host['natdns'].nil?
+    provider_section << "      vb.customize [\"modifyvm\", :id, \"--natdnsproxy1\", \"on\"]\n" unless host['natdns'].nil?
 
     provider_section << "      vb.gui = true\n" unless host['vb_gui'].nil?
 
