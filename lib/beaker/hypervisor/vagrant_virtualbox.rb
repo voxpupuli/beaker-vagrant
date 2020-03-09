@@ -63,15 +63,15 @@ class Beaker::VagrantVirtualbox < Beaker::Vagrant
       end
     end
 
-    provider_section << "      vb.customize [\"modifyvm\", :id, \"--ioapic\", \"on\"]\n" unless host['ioapic'].nil?
+    provider_section << "      vb.customize ['modifyvm', :id, '--ioapic', 'on']\n" unless host['ioapic'].nil?
 
-    provider_section << "      vb.customize [\"modifyvm\", :id, \"--natdnshostresolver1\", \"on\"]\n" unless host['natdns'].nil?
+    provider_section << "      vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']\n" unless host['natdns'].nil?
 
-    provider_section << "      vb.customize [\"modifyvm\", :id, \"--natdnsproxy1\", \"on\"]\n" unless host['natdns'].nil?
+    provider_section << "      vb.customize ['modifyvm', :id, '--natdnsproxy1', 'on']\n" unless host['natdns'].nil?
 
     provider_section << "      vb.gui = true\n" unless host['vb_gui'].nil?
 
-    provider_section << "      [\"modifyvm\", :id, \"--cpuidset\", \"1\",\"000206a7\",\"02100800\",\"1fbae3bf\",\"bfebfbff\"\]" if /osx/i.match(host['platform'])
+    provider_section << "      ['modifyvm', :id, '--cpuidset', '1','000206a7','02100800','1fbae3bf','bfebfbff'\]" if /osx/i.match(host['platform'])
 
     if host['disk_path']
       unless File.exist?(host['disk_path'])
