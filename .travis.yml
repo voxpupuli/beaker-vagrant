@@ -1,0 +1,14 @@
+---
+os:
+  - linux
+before_install:
+  - gem update --system 2.2.1
+  - gem --version
+language: ruby
+script: "bundle exec rake test:spec:run"
+notifications:
+  email: false
+rvm:
+  - 2.6
+  - 2.5
+  - 2.4
