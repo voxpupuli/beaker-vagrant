@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Beaker::VagrantVirtualbox do
   let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double().as_null_object }) }
   let( :vagrant ) { Beaker::VagrantVirtualbox.new( @hosts, options ) }
+  let(:vagrantfile_path) do
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    File.expand_path( File.join( path, 'Vagrantfile' ))
+  end
 
   before :each do
     @hosts = make_hosts()
@@ -49,6 +53,15 @@ describe Beaker::VagrantVirtualbox do
 
     vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
     expect( vagrantfile ).to include( " vb.customize ['modifyvm', :id, '--ioapic', 'on']")
+  end
+
+  it "can enable NAT DNS on hosts" do
+    hosts = make_hosts({:natdns => 'on'},1)
+    vagrant.make_vfile( hosts )
+    vagrantfile = File.read( vagrantfile_path )
+
+    expect( vagrantfile ).to include( " vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']")
+    expect( vagrantfile ).to include( " vb.customize ['modifyvm', :id, '--natdnsproxy1', 'on']")
   end
 
   it "correctly provisions storage with the USB controller" do
