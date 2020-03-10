@@ -1,5 +1,21 @@
 # Vagrant
 
+<!-- vim-markdown-toc GFM -->
+
+  * [Getting Started](#getting-started)
+    * [Requirements](#requirements)
+    * [Setup a Vagrant Hosts File](#setup-a-vagrant-hosts-file)
+* [Vagrant-Specific Hosts File Settings](#vagrant-specific-hosts-file-settings)
+    * [Running With a GUI](#running-with-a-gui)
+    * [Mounting Local Folders](#mounting-local-folders)
+    * [Forwarding Ports to Guest](#forwarding-ports-to-guest)
+    * [Volumes Support](#volumes-support)
+    * [Adding vagrant shell provisioner](#adding-vagrant-shell-provisioner)
+    * [Using the host's resolver as a DNS proxy in NAT mode (virtualbox only)](#using-the-hosts-resolver-as-a-dns-proxy-in-nat-mode-virtualbox-only)
+* [vagrant plugins](#vagrant-plugins)
+
+<!-- vim-markdown-toc -->
+
 Vagrant's slogan is "development environments made easy". Vagrant provides an
 abstraction on top of a VM or cloud provider that allows you to manage
 hosts and their provisioning. <https://www.vagrantup.com/>.
@@ -211,8 +227,30 @@ When using the Vagrant Hypervisor, beaker can create the Vagrantfile with a shel
 
 In the above, beaker will create a Vagrantfile which runs the above shell script on the Agent guest.
 
+### Using the host's resolver as a DNS proxy in NAT mode (virtualbox only)
+
+When using the Vagrant hypervisor with the virtualbox provider, beaker can
+configure the VirtualBox NAT engine's DHCP sever to proxy DNS queries through
+to the host's resolver using the `natdns` setting in the nodeset file.
+
+**Example hosts file**
+
+    HOSTS:
+      el7-server:
+        roles:
+          - default
+        platform: el-7-x86_64
+        box: centos/7
+        hypervisor: vagrant
+        natdns: on
+        yum_repos:
+          epel:
+            mirrorlist: 'https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us'
+            gpgkeys:
+              - https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-$releasever
+
 # vagrant plugins #
 
-You can check more information for some suported vagrant plugins:
+You can check more information for some supported vagrant plugins:
 
  - [vagrant-libvirt](vagrant_libvirt.md)

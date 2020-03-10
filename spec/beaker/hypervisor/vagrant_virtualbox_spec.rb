@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Beaker::VagrantVirtualbox do
   let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double().as_null_object }) }
   let( :vagrant ) { Beaker::VagrantVirtualbox.new( @hosts, options ) }
+  let(:vagrantfile_path) do
+    path = vagrant.instance_variable_get( :@vagrant_path )
+    File.expand_path( File.join( path, 'Vagrantfile' ))
+  end
 
   before :each do
     @hosts = make_hosts()
@@ -41,14 +45,23 @@ describe Beaker::VagrantVirtualbox do
 
   end
 
-  it "can enable ioapic(multiple cores) on hosts" do 
+  it "can enable ioapic(multiple cores) on hosts" do
     path = vagrant.instance_variable_get( :@vagrant_path )
     hosts = make_hosts({:ioapic => 'true'},1)
 
     vagrant.make_vfile( hosts )
 
     vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
-    expect( vagrantfile ).to include( %Q{ vb.customize ["modifyvm", :id, "--ioapic", "on"]})
+    expect( vagrantfile ).to include( " vb.customize ['modifyvm', :id, '--ioapic', 'on']")
+  end
+
+  it "can enable NAT DNS on hosts" do
+    hosts = make_hosts({:natdns => 'on'},1)
+    vagrant.make_vfile( hosts )
+    vagrantfile = File.read( vagrantfile_path )
+
+    expect( vagrantfile ).to include( " vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']")
+    expect( vagrantfile ).to include( " vb.customize ['modifyvm', :id, '--natdnsproxy1', 'on']")
   end
 
   it "correctly provisions storage with the USB controller" do
@@ -57,10 +70,10 @@ describe Beaker::VagrantVirtualbox do
 
     vagrant.make_vfile( hosts )
     vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
-    expect( vagrantfile ).to include(%Q{ vb.customize ['modifyvm', :id, '--usb', 'on']})
-    expect( vagrantfile ).to include(%Q{ vb.customize ['storagectl', :id, '--name', 'Beaker USB Controller', '--add', 'usb', '--portcount', '8', '--controller', 'USB', '--bootable', 'off']})
-    expect( vagrantfile ).to include(%Q{ vb.customize ['createhd', '--filename', 'vm1-test_disk.vdi', '--size', '5120']})
-    expect( vagrantfile ).to include(%Q{ vb.customize ['storageattach', :id, '--storagectl', 'Beaker USB Controller', '--port', '0', '--device', '0', '--type', 'hdd', '--medium', 'vm1-test_disk.vdi']})
+    expect( vagrantfile ).to include(" vb.customize ['modifyvm', :id, '--usb', 'on']")
+    expect( vagrantfile ).to include(" vb.customize ['storagectl', :id, '--name', 'Beaker USB Controller', '--add', 'usb', '--portcount', '8', '--controller', 'USB', '--bootable', 'off']")
+    expect( vagrantfile ).to include(" vb.customize ['createhd', '--filename', 'vm1-test_disk.vdi', '--size', '5120']")
+    expect( vagrantfile ).to include(" vb.customize ['storageattach', :id, '--storagectl', 'Beaker USB Controller', '--port', '0', '--device', '0', '--type', 'hdd', '--medium', 'vm1-test_disk.vdi']")
   end
 
   it "correctly provisions storage with the LSILogic controller" do
@@ -69,9 +82,9 @@ describe Beaker::VagrantVirtualbox do
 
     vagrant.make_vfile( hosts )
     vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
-    expect( vagrantfile ).to include(%Q{ vb.customize ['storagectl', :id, '--name', 'Beaker LSILogic Controller', '--add', 'scsi', '--portcount', '16', '--controller', 'LSILogic', '--bootable', 'off']})
-    expect( vagrantfile ).to include(%Q{ vb.customize ['createhd', '--filename', 'vm1-test_disk.vdi', '--size', '5120']})
-    expect( vagrantfile ).to include(%Q{ vb.customize ['storageattach', :id, '--storagectl', 'Beaker LSILogic Controller', '--port', '0', '--device', '0', '--type', 'hdd', '--medium', 'vm1-test_disk.vdi']})
+    expect( vagrantfile ).to include(" vb.customize ['storagectl', :id, '--name', 'Beaker LSILogic Controller', '--add', 'scsi', '--portcount', '16', '--controller', 'LSILogic', '--bootable', 'off']")
+    expect( vagrantfile ).to include(" vb.customize ['createhd', '--filename', 'vm1-test_disk.vdi', '--size', '5120']")
+    expect( vagrantfile ).to include(" vb.customize ['storageattach', :id, '--storagectl', 'Beaker LSILogic Controller', '--port', '0', '--device', '0', '--type', 'hdd', '--medium', 'vm1-test_disk.vdi']")
   end
 
   it "correctly provisions storage with the default controller" do
@@ -80,8 +93,8 @@ describe Beaker::VagrantVirtualbox do
 
     vagrant.make_vfile( hosts )
     vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
-    expect( vagrantfile ).to include(%Q{ vb.customize ['storagectl', :id, '--name', 'Beaker IntelAHCI Controller', '--add', 'sata', '--portcount', '2', '--controller', 'IntelAHCI', '--bootable', 'off']})
-    expect( vagrantfile ).to include(%Q{ vb.customize ['createhd', '--filename', 'vm1-test_disk.vdi', '--size', '5120']})
-    expect( vagrantfile ).to include(%Q{ vb.customize ['storageattach', :id, '--storagectl', 'Beaker IntelAHCI Controller', '--port', '0', '--device', '0', '--type', 'hdd', '--medium', 'vm1-test_disk.vdi']})
+    expect( vagrantfile ).to include(" vb.customize ['storagectl', :id, '--name', 'Beaker IntelAHCI Controller', '--add', 'sata', '--portcount', '2', '--controller', 'IntelAHCI', '--bootable', 'off']")
+    expect( vagrantfile ).to include(" vb.customize ['createhd', '--filename', 'vm1-test_disk.vdi', '--size', '5120']")
+    expect( vagrantfile ).to include(" vb.customize ['storageattach', :id, '--storagectl', 'Beaker IntelAHCI Controller', '--port', '0', '--device', '0', '--type', 'hdd', '--medium', 'vm1-test_disk.vdi']")
   end
 end
