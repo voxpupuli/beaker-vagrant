@@ -202,6 +202,7 @@ module Beaker
         f.write(ssh_config)
         f.rewind
 
+        host[:vagrant_ssh_config] = f.path
         host['ssh'] = host['ssh'].merge(Net::SSH.configuration_for(host['ip'], f.path))
         host['user'] = user
         @temp_files << f
