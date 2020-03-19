@@ -484,7 +484,8 @@ EOF
         expect( file ).to receive( :write ).with("Host ip.address.for.#{name}\n        HostName 127.0.0.1\n        User root\n        Port 2222\n        UserKnownHostsFile /dev/null\n        StrictHostKeyChecking no\n        PasswordAuthentication no\n        IdentityFile /home/root/.vagrant.d/insecure_private_key\n        IdentitiesOnly no")
 
         vagrant.set_ssh_config( host, 'root' )
-        expect( host['ssh'] ).to be === { :config => file.path }
+        expect( host[:vagrant_ssh_config] ).to be === '/path/sshconfig'
+        expect( host['ssh'][:config]).to be === false
         expect( host['user']).to be === 'root'
       end
 
@@ -498,7 +499,8 @@ EOF
           expect( file ).to receive( :write ).with("Host ip.address.for.#{name}\n        HostName 127.0.0.1\n        User root\n        Port 2222\n        UserKnownHostsFile /dev/null\n        StrictHostKeyChecking no\n        PasswordAuthentication no\n        IdentityFile /home/root/.vagrant.d/insecure_private_key\n        IdentitiesOnly yes")
 
           vagrant.set_ssh_config( host, 'root' )
-          expect( host['ssh'] ).to be === { :config => file.path }
+          expect( host[:vagrant_ssh_config] ).to be === '/path/sshconfig'
+          expect( host['ssh'][:config]).to be === false
           expect( host['user']).to be === 'root'
         end
       end
