@@ -23,19 +23,13 @@ class Beaker::VagrantLibvirt < Beaker::Vagrant
       "      node.cpus = #{cpus(host, options)}\n" +
       "      node.memory = #{memsize(host, options)}\n" +
       "      node.qemu_use_session = false\n" +
-      build_options_str(options) +
+      build_options(options).join("\n") + "\n" +
       "    end\n"
   end
 
-  def self.build_options_str(options)
-    other_options_str = ''
-    if options['libvirt']
-      other_options = []
-      options['libvirt'].each do |k, v|
-        other_options << "      node.#{k} = '#{v}'"
-      end
-      other_options_str = other_options.join("\n")
-    end
-    "#{other_options_str}\n"
+  def self.build_options(options)
+    return [] unless options['libvirt']
+
+    options['libvirt'].map { |k, v| "      node.#{k} = '#{v}'" }
   end
 end
