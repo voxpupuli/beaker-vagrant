@@ -189,31 +189,31 @@ module Beaker
     end
 
     def set_ssh_config host, user
-        f = Tempfile.new("#{host.name}")
-        ssh_config = Dir.chdir(@vagrant_path) do
-          stdin, stdout, stderr, wait_thr = Open3.popen3(@vagrant_env, 'vagrant', 'ssh-config', host.name)
-          if not wait_thr.value.success?
-            raise "Failed to 'vagrant ssh-config' for #{host.name}"
-          end
-          stdout.read
+      f = Tempfile.new("#{host.name}")
+      ssh_config = Dir.chdir(@vagrant_path) do
+        stdin, stdout, stderr, wait_thr = Open3.popen3(@vagrant_env, 'vagrant', 'ssh-config', host.name)
+        if not wait_thr.value.success?
+          raise "Failed to 'vagrant ssh-config' for #{host.name}"
         end
-        #replace hostname with ip
-        ssh_config = ssh_config.gsub(/Host #{host.name}/, "Host #{host['ip']}") unless not host['ip']
+        stdout.read
+      end
+      #replace hostname with ip
+      ssh_config = ssh_config.gsub(/Host #{host.name}/, "Host #{host['ip']}") unless not host['ip']
 
-        #set the user
-        ssh_config = ssh_config.gsub(/User vagrant/, "User #{user}")
+      #set the user
+      ssh_config = ssh_config.gsub(/User vagrant/, "User #{user}")
 
-        if @options[:forward_ssh_agent] == true
-          ssh_config = ssh_config.gsub(/IdentitiesOnly yes/, "IdentitiesOnly no")
-        end
+      if @options[:forward_ssh_agent] == true
+        ssh_config = ssh_config.gsub(/IdentitiesOnly yes/, "IdentitiesOnly no")
+      end
 
-        f.write(ssh_config)
-        f.rewind
+      f.write(ssh_config)
+      f.rewind
 
-        host[:vagrant_ssh_config] = f.path
-        host['ssh'] = host['ssh'].merge(Net::SSH.configuration_for(host['ip'], f.path))
-        host['user'] = user
-        @temp_files << f
+      host[:vagrant_ssh_config] = f.path
+      host['ssh'] = host['ssh'].merge(Net::SSH.configuration_for(host['ip'], f.path))
+      host['user'] = user
+      @temp_files << f
     end
 
     def get_ip_from_vagrant_file(hostname)
