@@ -246,8 +246,8 @@ module Beaker
     end
 
     def configure(opts = {})
-      if !@options[:provision]
-        if !File.file?(@vagrant_file)
+      unless @options[:provision]
+        unless File.file?(@vagrant_file)
           raise "Beaker is configured with provision = false but no vagrant file was found at #{@vagrant_file}. You need to enable provision"
         end
 
