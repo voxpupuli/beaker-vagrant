@@ -6,28 +6,6 @@ module Beaker
     require 'beaker/hypervisor/vagrant/mount_folder'
     require 'beaker/hypervisor/vagrant_virtualbox'
 
-    def rand_chunk
-      (2 + rand(252)).to_s #don't want a 0, 1, or a 255
-    end
-
-    def randip(hypervisor=nil)
-      case hypervisor
-      when /libvirt/
-        "10.254.#{rand_chunk}.#{rand_chunk}"
-      else
-        "10.255.#{rand_chunk}.#{rand_chunk}"
-      end
-    end
-
-    def private_network_generator(host)
-      private_network_string = "    v.vm.network :private_network, ip: \"#{host['ip'].to_s}\", :netmask => \"#{host['netmask'] ||= "255.255.0.0"}\""
-      if host['network_mac']
-        private_network_string << ", :mac => \"#{host['network_mac']}\"\n"
-      else
-        private_network_string << "\n"
-      end
-    end
-
     def connection_preference(host)
       [:hostname]
     end
@@ -54,7 +32,6 @@ module Beaker
 
       hosts.each do |host|
         host.name.tr!('_','-') # Rewrite Hostname with hyphens instead of underscores to get legal hostname
-        host['ip'] ||= randip(host.host_hash[:hypervisor]) #use the existing ip, otherwise default to a random ip
         v_file << "  c.vm.define '#{host.name}' do |v|\n"
         v_file << "    v.vm.hostname = '#{host.name}'\n"
         v_file << "    v.vm.box = '#{host['box']}'\n"
@@ -64,7 +41,6 @@ module Beaker
         v_file << "    v.vm.box_check_update = '#{host['box_check_update'] ||= 'true'}'\n"
         v_file << "    v.vm.synced_folder '.', '/vagrant', disabled: true\n" if host['synced_folder'] == 'disabled'
         v_file << shell_provisioner_generator(host['shell_provisioner']) if host['shell_provisioner']
-        v_file << private_network_generator(host)
 
         unless host['mount_folders'].nil?
           host['mount_folders'].each do |name, folder|

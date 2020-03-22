@@ -51,7 +51,6 @@ Vagrant.configure("2") do |c|
     v.vm.box = 'vm2vm1_of_my_box'
     v.vm.box_url = 'http://address.for.my.box.vm1'
     v.vm.box_check_update = 'true'
-    v.vm.network :private_network, ip: "ip.address.for.vm1", :netmask => "255.255.0.0"
     v.vm.synced_folder './', '/temp', create: true
     v.vm.synced_folder '../', '/tmp', create: true
     v.vm.network :forwarded_port, guest: 80, host: 10080
@@ -66,7 +65,6 @@ Vagrant.configure("2") do |c|
     v.vm.box = 'vm2vm2_of_my_box'
     v.vm.box_url = 'http://address.for.my.box.vm2'
     v.vm.box_check_update = 'true'
-    v.vm.network :private_network, ip: "ip.address.for.vm2", :netmask => "255.255.0.0"
     v.vm.synced_folder './', '/temp', create: true
     v.vm.synced_folder '../', '/tmp', create: true
     v.vm.network :forwarded_port, guest: 80, host: 10080
@@ -81,7 +79,6 @@ Vagrant.configure("2") do |c|
     v.vm.box = 'vm2vm3_of_my_box'
     v.vm.box_url = 'http://address.for.my.box.vm3'
     v.vm.box_check_update = 'true'
-    v.vm.network :private_network, ip: "ip.address.for.vm3", :netmask => "255.255.0.0"
     v.vm.synced_folder './', '/temp', create: true
     v.vm.synced_folder '../', '/tmp', create: true
     v.vm.network :forwarded_port, guest: 80, host: 10080
@@ -124,16 +121,6 @@ EOF
 
       vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
       expect( vagrantfile ).to match(/v.vm.synced_folder .* disabled: true/)
-    end
-
-    it "can make a Vagrantfile with network mac specified" do
-      path = vagrant.instance_variable_get( :@vagrant_path )
-
-      hosts = make_hosts({:network_mac => 'b6:33:ae:19:48:f9'},1)
-      vagrant.make_vfile( hosts, options )
-
-      vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
-      expect( vagrantfile ).to match(/v.vm.network :private_network, ip: "ip.address.for.vm1", :netmask => "255.255.0.0", :mac => "b6:33:ae:19:48:f9/)
     end
 
     it "can make a Vagrantfile with improper keys for synced folders" do
