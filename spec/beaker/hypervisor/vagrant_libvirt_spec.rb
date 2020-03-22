@@ -39,6 +39,10 @@ describe Beaker::VagrantLibvirt do
       is_expected.to include( %Q{    v.vm.provider :libvirt do |node|})
     end
 
+    it "has no private network" do
+      is_expected.not_to include('v.vm.network :private_network')
+    end
+
     it "can specify the memory as an integer" do
       is_expected.to include('node.memory = 1024')
     end

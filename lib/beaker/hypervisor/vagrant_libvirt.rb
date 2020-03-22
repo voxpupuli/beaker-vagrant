@@ -25,4 +25,10 @@ class Beaker::VagrantLibvirt < Beaker::Vagrant
 
     options['libvirt'].map { |k, v| "      node.#{k} = '#{v}'" }
   end
+
+  private
+
+  def set_host_default_ip(host)
+    # In vagrant-libvirt hosts get a management IP, no need for a default
+  end
 end
