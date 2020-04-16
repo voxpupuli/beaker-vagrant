@@ -20,18 +20,20 @@ describe Beaker::VagrantLibvirt do
       expect( vagrant ).to receive( :set_ssh_config ).with( host, host_prev_name ).once
     end
     expect( vagrant ).to receive( :hack_etc_hosts ).with( @hosts, options ).once
-    FakeFS.activate!
     expect( vagrant ).to receive( :vagrant_cmd ).with( "up --provider libvirt" ).once
-    vagrant.provision
+    FakeFS do
+      vagrant.provision
+    end
   end
 
   context 'Correct vagrant configuration' do
     before(:each) do
-      FakeFS.activate!
-      path = vagrant.instance_variable_get( :@vagrant_path )
+      FakeFS do
+        path = vagrant.instance_variable_get( :@vagrant_path )
 
-      vagrant.make_vfile( @hosts, options )
-      @vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
+        vagrant.make_vfile( @hosts, options )
+        @vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
+      end
     end
 
     it "can make a Vagranfile for a set of hosts" do
