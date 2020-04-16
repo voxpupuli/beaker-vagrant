@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   if RUBY_VERSION < "2.3"
     s.add_development_dependency 'fakefs', '~> 0.6', '< 0.14'
   else
-    s.add_development_dependency 'fakefs', '~> 0.6'
+    s.add_development_dependency 'fakefs', '>= 0.6', '< 2.0'
   end
   s.add_development_dependency 'rake', '~> 10.1'
   s.add_development_dependency 'simplecov'
