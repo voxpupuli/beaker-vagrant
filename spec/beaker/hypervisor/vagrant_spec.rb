@@ -480,7 +480,8 @@ EOF
       end
 
       it "can generate a ssh-config file" do
-       expect( Tempfile ).to receive( :new ).with( "#{host.name}").and_return( file )
+        expect( Tempfile ).to receive( :new ).with( "#{host.name}").and_return( file )
+        expect( Dir ).to receive( :exist? ).with( '/.vagrant/beaker_vagrant_files/beaker_sample.cfg' ).and_return( true )
         expect( file ).to receive( :write ).with("Host ip.address.for.#{name}\n        HostName 127.0.0.1\n        User root\n        Port 2222\n        UserKnownHostsFile /dev/null\n        StrictHostKeyChecking no\n        PasswordAuthentication no\n        IdentityFile /home/root/.vagrant.d/insecure_private_key\n        IdentitiesOnly no")
 
         vagrant.set_ssh_config( host, 'root' )
@@ -496,6 +497,7 @@ EOF
           options = vagrant.instance_variable_set( :@options, options )
 
           expect( Tempfile ).to receive( :new ).with( "#{host.name}").and_return( file )
+          expect( Dir ).to receive( :exist? ).with( '/.vagrant/beaker_vagrant_files/beaker_sample.cfg' ).and_return( true )
           expect( file ).to receive( :write ).with("Host ip.address.for.#{name}\n        HostName 127.0.0.1\n        User root\n        Port 2222\n        UserKnownHostsFile /dev/null\n        StrictHostKeyChecking no\n        PasswordAuthentication no\n        IdentityFile /home/root/.vagrant.d/insecure_private_key\n        IdentitiesOnly yes")
 
           vagrant.set_ssh_config( host, 'root' )
