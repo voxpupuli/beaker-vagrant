@@ -451,59 +451,57 @@ EOF
     end
 
     describe "set_ssh_config" do
-      let( :out ) { double( 'stdout' ) }
+      let( :out ) do
+        <<-CONFIG
+        Host #{name}
+          HostName 127.0.0.1
+          User vagrant
+          Port 2222
+          UserKnownHostsFile /dev/null
+          StrictHostKeyChecking no
+          PasswordAuthentication no
+          IdentityFile /home/root/.vagrant.d/insecure_private_key
+          IdentitiesOnly yes
+        CONFIG
+      end
       let( :host ) { @hosts[0] }
       let( :name ) { host.name }
-      let( :file ) { double( 'file' ) }
+      let( :override_options ) { {} }
 
       before :each do
-        allow( Dir ).to receive( :chdir ).and_yield()
-        wait_thr = OpenStruct.new
-        state = double( 'state' )
-        allow( state ).to receive( :success? ).and_return( true )
-        wait_thr.value = state
+        # FakeFS is just broken with Tempfile
+        FakeFS.deactivate!
+        Dir.mktmpdir do |dir|
+          vagrant.instance_variable_get(:@options).merge!(override_options)
+          vagrant.instance_variable_set(:@vagrant_path, dir)
+          state = double( 'state' )
+          allow( state ).to receive( :success? ).and_return( true )
+          allow( Open3 ).to receive( :capture3 ).with( {"RUBYLIB"=>"", "RUBYOPT"=>""}, 'vagrant', 'ssh-config', name ).and_return( [ out, "", state ])
 
-        allow( Open3 ).to receive( :popen3 ).with( {"RUBYLIB"=>"", "RUBYOPT"=>""}, 'vagrant', 'ssh-config', name ).and_return( [ "", out, "", wait_thr ])
-
-        allow( file ).to receive( :path ).and_return( '/path/sshconfig' )
-        allow( file ).to receive( :rewind ).and_return( true )
-
-        allow( out ).to receive( :read ).and_return("Host #{name}
-        HostName 127.0.0.1
-        User vagrant
-        Port 2222
-        UserKnownHostsFile /dev/null
-        StrictHostKeyChecking no
-        PasswordAuthentication no
-        IdentityFile /home/root/.vagrant.d/insecure_private_key
-        IdentitiesOnly yes")
+          vagrant.set_ssh_config( host, 'root' )
+        end
       end
 
-      it "can generate a ssh-config file" do
-        expect( Tempfile ).to receive( :new ).with( "#{host.name}").and_return( file )
-        expect( Dir ).to receive( :exist? ).with( '/.vagrant/beaker_vagrant_files/beaker_sample.cfg' ).and_return( true )
-        expect( file ).to receive( :write ).with("Host ip.address.for.#{name}\n        HostName 127.0.0.1\n        User root\n        Port 2222\n        UserKnownHostsFile /dev/null\n        StrictHostKeyChecking no\n        PasswordAuthentication no\n        IdentityFile /home/root/.vagrant.d/insecure_private_key\n        IdentitiesOnly no")
+      it 'sets the user to root' do
+        expect(host['user']).to be === 'root'
+      end
 
-        vagrant.set_ssh_config( host, 'root' )
-        expect( host[:vagrant_ssh_config] ).to be === '/path/sshconfig'
-        expect( host['ssh'][:config]).to be === false
-        expect( host['user']).to be === 'root'
+      it 'sets the ssh user to root' do
+        expect(host['ssh']['user']).to be === 'root'
+      end
+
+      # This is because forward_ssh_agent is true by default
+      it 'sets IdentitiesOnly to no' do
+        expect(host['ssh'][:keys_only]).to be === false
       end
 
       context "when :forward_ssh_agent is false" do
-        it "should not change IdentitiesOnly to no" do
-          options = vagrant.instance_variable_get( :@options )
-          options['forward_ssh_agent'] = false
-          options = vagrant.instance_variable_set( :@options, options )
+        let(:override_options) do
+          {forward_ssh_agent: false}
+        end
 
-          expect( Tempfile ).to receive( :new ).with( "#{host.name}").and_return( file )
-          expect( Dir ).to receive( :exist? ).with( '/.vagrant/beaker_vagrant_files/beaker_sample.cfg' ).and_return( true )
-          expect( file ).to receive( :write ).with("Host ip.address.for.#{name}\n        HostName 127.0.0.1\n        User root\n        Port 2222\n        UserKnownHostsFile /dev/null\n        StrictHostKeyChecking no\n        PasswordAuthentication no\n        IdentityFile /home/root/.vagrant.d/insecure_private_key\n        IdentitiesOnly yes")
-
-          vagrant.set_ssh_config( host, 'root' )
-          expect( host[:vagrant_ssh_config] ).to be === '/path/sshconfig'
-          expect( host['ssh'][:config]).to be === false
-          expect( host['user']).to be === 'root'
+        it "should keep IdentitiesOnly to yes" do
+          expect( host['ssh'][:keys_only]).to be === true
         end
       end
     end
@@ -515,17 +513,6 @@ EOF
         it 'raises an error' do
           expect { vagrant.configure }.to raise_error RuntimeError, /no vagrant file was found/
         end
-      end
-
-      it 'calls #get_ip_from_vagrant_file' do
-        vagrant.make_vfile(@hosts)
-
-        @hosts.each do |host|
-          allow(vagrant).to receive(:set_ssh_config).with(host, anything)
-          expect(vagrant).to receive(:get_ip_from_vagrant_file).with(host.name)
-        end
-
-        vagrant.configure
       end
 
       it 'calls #set_all_ssh_config' do
@@ -568,31 +555,6 @@ EOF
       it 'calls #hack_etc_hosts' do
         expect(vagrant).to receive(:hack_etc_hosts).with(@hosts, options)
         vagrant.set_all_ssh_config
-      end
-    end
-
-    describe "get_ip_from_vagrant_file" do
-      before :each do
-        allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
-        vagrant.make_vfile( @hosts )
-      end
-
-      it "can find the correct ip for the provided hostname" do
-        @hosts.each do |host|
-          expect( vagrant.get_ip_from_vagrant_file(host.name) ).to be === host[:ip]
-        end
-
-      end
-
-      it "returns nil if it is unable to find an ip" do
-        expect( vagrant.get_ip_from_vagrant_file("unknown") ).to be_nil
-      end
-
-      it "raises an error if no Vagrantfile is present" do
-        File.delete( vagrant.instance_variable_get( :@vagrant_file ) )
-        @hosts.each do |host|
-          expect{ vagrant.get_ip_from_vagrant_file(host.name) }.to raise_error RuntimeError, /No vagrant file found/
-        end
       end
     end
 
