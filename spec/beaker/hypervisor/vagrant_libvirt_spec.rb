@@ -54,10 +54,5 @@ describe Beaker::VagrantLibvirt do
       expect( @vagrantfile.split("\n").map(&:strip) )
         .to include("node.uri = 'qemu+ssh://root@host/system'")
     end
-
-    it "has a mac address in the proper format" do
-      expect( @vagrantfile.split("\n").map(&:strip) )
-        .to include(/:mac => "08:00:27:\h{2}:\h{2}:\h{2}"/)
-    end
   end
 end
