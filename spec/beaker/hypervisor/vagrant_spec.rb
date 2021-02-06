@@ -29,11 +29,11 @@ module Beaker
       })
     end
 
-    it "stores the vagrant file in $WORKINGDIR/.vagrant/beaker_vagrant_files/sample.cfg" do
+    it "stores the vagrant file in $WORKINGDIR/.vagrant/beaker_vagrant_files/beaker_sample.cfg" do
       allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
       path = vagrant.instance_variable_get( :@vagrant_path )
 
-      expect( path ).to be === File.join(Dir.pwd, '.vagrant', 'beaker_vagrant_files', 'sample.cfg')
+      expect( path ).to be === File.join(Dir.pwd, '.vagrant', 'beaker_vagrant_files', 'beaker_sample.cfg')
 
     end
 
