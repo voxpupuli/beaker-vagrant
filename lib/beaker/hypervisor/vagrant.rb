@@ -16,8 +16,13 @@ module Beaker
       (2 + rand(252)).to_s #don't want a 0, 1, or a 255
     end
 
-    def randip
-      "10.255.#{rand_chunk}.#{rand_chunk}"
+    def randip(hypervisor=nil)
+      case hypervisor
+      when /libvirt/
+        "10.254.#{rand_chunk}.#{rand_chunk}"
+      else
+        "10.255.#{rand_chunk}.#{rand_chunk}"
+      end
     end
 
     def private_network_generator(host)
@@ -57,7 +62,7 @@ module Beaker
 
       hosts.each do |host|
         host.name.tr!('_','-') # Rewrite Hostname with hyphens instead of underscores to get legal hostname
-        host['ip'] ||= randip #use the existing ip, otherwise default to a random ip
+        host['ip'] ||= randip(host.host_hash[:hypervisor]) #use the existing ip, otherwise default to a random ip
         v_file << "  c.vm.define '#{host.name}' do |v|\n"
         v_file << "    v.vm.hostname = '#{host.name}'\n"
         v_file << "    v.vm.box = '#{host['box']}'\n"
@@ -136,6 +141,9 @@ module Beaker
         @logger.debug "created Vagrantfile for VagrantHost #{host.name}"
       end
       v_file << "end\n"
+
+      # In case this is called directly
+      FileUtils.mkdir_p(@vagrant_path)
       File.open(@vagrant_file, 'w') do |f|
         f.write(v_file)
       end
@@ -232,8 +240,7 @@ module Beaker
       @logger = options[:logger]
       @temp_files = []
       @hosts = vagrant_hosts
-      @vagrant_path = File.expand_path(File.join(File.basename(__FILE__), '..', '.vagrant', 'beaker_vagrant_files', File.basename(options[:hosts_file])))
-      FileUtils.mkdir_p(@vagrant_path)
+      @vagrant_path = File.expand_path(File.join(File.basename(__FILE__), '..', '.vagrant', 'beaker_vagrant_files', 'beaker_' + File.basename(options[:hosts_file])))
       @vagrant_file = File.expand_path(File.join(@vagrant_path, "Vagrantfile"))
       @vagrant_env = { "RUBYLIB" => "", "RUBYOPT" => "" }
     end
@@ -254,6 +261,8 @@ module Beaker
     end
 
     def provision(provider = nil)
+      FileUtils.mkdir_p(@vagrant_path)
+
       #setting up new vagrant hosts
       #make sure that any old boxes are dead dead dead
       begin
