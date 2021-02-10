@@ -45,4 +45,31 @@ class Beaker::VagrantLibvirt < Beaker::Vagrant
     end
     "#{other_options_str}\n"
   end
+
+  def private_network_generator(host)
+    #if 'dhcp_ip' not provided, use the default example IP.
+    #:libvirt__network_address is a portion of the private network options
+    # and here is the relevant documentation:
+    #Used only when :type is set to dhcp. Only /24 subnet is supported.
+    #Default is 172.28.128.0
+    unless host['dhcp_ip'].nil? || host['dhcp_ip'].empty?
+      dhcp_ip = host['dhcp_ip']
+    else
+      dhcp_ip = "172.28.128.0"
+    end
+    private_network_string = "    v.vm.network :private_network, :type => \"dhcp\", :libvirt__network_address => \"#{dhcp_ip}\"\n"
+  end
+  
+  def shell_provisioner_generator(provisioner_config)
+    #hacky fix, but the default vagrant file generator overlays the route
+    #by default to not handle the ip masquerade that the vagrant-libvirt
+    #will provide. To work around this, by deleting the default route whenever
+    #the vagrant libvirt vm comes up, it will correct itself and then the ip
+    #masquerade will work as intended.
+    unless provisioner_config.nil?
+      shell_provisioner_string = "    v.vm.provision 'shell', :inline => 'ip route del default', :run => 'always'\n"
+    else
+      shell_provisioner_string = "    v.vm.provision 'shell', :inline => 'ip route del default', :run => 'always'\n"
+    end
+  end
 end
