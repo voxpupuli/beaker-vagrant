@@ -189,6 +189,8 @@ module Beaker
     end
 
     def set_ssh_config host, user
+      return unless Dir.exist?(@vagrant_path)
+
       f = Tempfile.new("#{host.name}")
       ssh_config = Dir.chdir(@vagrant_path) do
         stdin, stdout, stderr, wait_thr = Open3.popen3(@vagrant_env, 'vagrant', 'ssh-config', host.name)
