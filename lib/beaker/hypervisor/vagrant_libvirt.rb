@@ -1,13 +1,6 @@
 require 'beaker/hypervisor/vagrant'
 
 class Beaker::VagrantLibvirt < Beaker::Vagrant
-  @memory = nil
-  @cpu    = nil
-
-  class << self
-    attr_reader :memory
-  end
-
   # Return a random mac address with colons
   #
   # @return [String] a random mac address

@@ -24,18 +24,14 @@ Gem::Specification.new do |s|
   if RUBY_VERSION < "2.3"
     s.add_development_dependency 'fakefs', '~> 0.6', '< 0.14'
   else
-    s.add_development_dependency 'fakefs', '~> 0.6'
+    s.add_development_dependency 'fakefs', '>= 0.6', '< 2.0'
   end
-  s.add_development_dependency 'rake', '~> 10.1'
+  s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'pry', '~> 0.10'
 
   # Documentation dependencies
   s.add_development_dependency 'yard'
   s.add_development_dependency 'thin'
-
-  # Run time dependencies
-  s.add_runtime_dependency 'stringify-hash', '~> 0.0.0'
-
 end
 
