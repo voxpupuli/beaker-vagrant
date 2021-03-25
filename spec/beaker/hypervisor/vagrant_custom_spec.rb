@@ -19,9 +19,10 @@ describe Beaker::VagrantCustom do
       expect( vagrant ).to receive( :set_ssh_config ).with( host, host_prev_name ).once
     end
     expect( vagrant ).to receive( :hack_etc_hosts ).with( @hosts, options ).once
-    FakeFS.activate!
     expect( vagrant ).to receive( :vagrant_cmd ).with( "up" ).once
-    vagrant.provision
+    FakeFS do
+      vagrant.provision
+    end
   end
 
   context 'takes vagrant configuration from existing file' do
