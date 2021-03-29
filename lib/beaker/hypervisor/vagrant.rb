@@ -242,7 +242,7 @@ module Beaker
       @logger = options[:logger]
       @temp_files = []
       @hosts = vagrant_hosts
-      @vagrant_path = File.expand_path(File.join(File.basename(__FILE__), '..', '.vagrant', 'beaker_vagrant_files', 'beaker_' + File.basename(options[:hosts_file])))
+      @vagrant_path = File.expand_path(File.join('.vagrant', 'beaker_vagrant_files', 'beaker_' + File.basename(options[:hosts_file])))
       @vagrant_file = File.expand_path(File.join(@vagrant_path, "Vagrantfile"))
       @vagrant_env = { "RUBYLIB" => "", "RUBYOPT" => "" }
     end
