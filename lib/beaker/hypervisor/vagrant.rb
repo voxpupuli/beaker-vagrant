@@ -40,6 +40,10 @@ module Beaker
       end
     end
 
+    def connection_preference(host)
+      [:hostname]
+    end
+
     def shell_provisioner_generator(provisioner_config)
       unless provisioner_config['path'].nil? || provisioner_config['path'].empty?
         unless provisioner_config['args'].nil?
@@ -191,56 +195,31 @@ module Beaker
     def set_ssh_config host, user
       return unless Dir.exist?(@vagrant_path)
 
-      f = Tempfile.new("#{host.name}")
       ssh_config = Dir.chdir(@vagrant_path) do
-        stdin, stdout, stderr, wait_thr = Open3.popen3(@vagrant_env, 'vagrant', 'ssh-config', host.name)
-        if not wait_thr.value.success?
+        stdout, _, status = Open3.capture3(@vagrant_env, 'vagrant', 'ssh-config', host.name)
+        unless status.success?
           raise "Failed to 'vagrant ssh-config' for #{host.name}"
         end
-        stdout.read
-      end
-      #replace hostname with ip
-      ssh_config = ssh_config.gsub(/Host #{host.name}/, "Host #{host['ip']}") unless not host['ip']
 
-      #set the user
-      ssh_config = ssh_config.gsub(/User vagrant/, "User #{user}")
+        Tempfile.create do |f|
+          f.write(stdout)
+          f.flush
 
-      if @options[:forward_ssh_agent] == true
-        ssh_config = ssh_config.gsub(/IdentitiesOnly yes/, "IdentitiesOnly no")
-      end
-
-      f.write(ssh_config)
-      f.rewind
-
-      host[:vagrant_ssh_config] = f.path
-      host['ssh'] = host['ssh'].merge(Net::SSH.configuration_for(host['ip'], f.path))
-      host['user'] = user
-      @temp_files << f
-    end
-
-    def get_ip_from_vagrant_file(hostname)
-      ip = ''
-      if File.file?(@vagrant_file) #we should have a vagrant file available to us for reading
-        f = File.read(@vagrant_file)
-        m = /'#{hostname}'.*?ip:\s*('|")\s*([^'"]+)('|")/m.match(f)
-        if m
-          ip = m[2]
-          @logger.debug("Determined existing vagrant box #{hostname} ip to be: #{ip} ")
-        else
-          ip = nil
-          @logger.debug("Unable to determine ip for vagrant box #{hostname}")
+          Net::SSH::Config.for(host.name, [f.path])
         end
-      else
-        raise("No vagrant file found (should be located at #{@vagrant_file})")
       end
-      ip
+
+      ssh_config[:user] = user
+      ssh_config[:keys_only] = false if @options[:forward_ssh_agent] == true
+
+      host['ssh'] = host['ssh'].merge(ssh_config)
+      host['user'] = user
     end
 
     def initialize(vagrant_hosts, options)
       require 'tempfile'
       @options = options
       @logger = options[:logger]
-      @temp_files = []
       @hosts = vagrant_hosts
       @vagrant_path = File.expand_path(File.join(File.basename(__FILE__), '..', '.vagrant', 'beaker_vagrant_files', 'beaker_' + File.basename(options[:hosts_file])))
       @vagrant_file = File.expand_path(File.join(@vagrant_path, "Vagrantfile"))
@@ -251,10 +230,6 @@ module Beaker
       unless @options[:provision]
         unless File.file?(@vagrant_file)
           raise "Beaker is configured with provision = false but no vagrant file was found at #{@vagrant_file}. You need to enable provision"
-        end
-
-        @hosts.each do |host|
-          host[:ip] = get_ip_from_vagrant_file(host.name)
         end
 
         set_all_ssh_config
@@ -294,9 +269,6 @@ module Beaker
 
     def cleanup
       @logger.debug "removing temporary ssh-config files per-vagrant box"
-      @temp_files.each do |f|
-        f.close()
-      end
       @logger.notify "Destroying vagrant boxes"
       vagrant_cmd("destroy --force")
       FileUtils.rm_rf(@vagrant_path)
