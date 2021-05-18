@@ -22,7 +22,6 @@ describe Beaker::VagrantDesktop do
 
   it "can make a Vagranfile for a set of hosts" do
     path = vagrant.instance_variable_get( :@vagrant_path )
-    allow( vagrant ).to receive( :randmac ).and_return( "0123456789" )
 
     vagrant.make_vfile( @hosts )
 

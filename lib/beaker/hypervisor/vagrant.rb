@@ -5,12 +5,6 @@ module Beaker
 
     require 'beaker/hypervisor/vagrant/mount_folder'
     require 'beaker/hypervisor/vagrant_virtualbox'
-    # Return a random mac address
-    #
-    # @return [String] a random mac address
-    def randmac
-      "080027" + (1..3).map{"%0.2X"%rand(256)}.join
-    end
 
     def rand_chunk
       (2 + rand(252)).to_s #don't want a 0, 1, or a 255
@@ -27,16 +21,10 @@ module Beaker
 
     def private_network_generator(host)
       private_network_string = "    v.vm.network :private_network, ip: \"#{host['ip'].to_s}\", :netmask => \"#{host['netmask'] ||= "255.255.0.0"}\""
-      case host['network_mac']
-      when 'false'
-        @mac = randmac
-        private_network_string << "\n"
-      when nil
-        @mac = randmac
-        private_network_string << ", :mac => \"#{@mac}\"\n"
+      if host['network_mac']
+        private_network_string << ", :mac => \"#{host['network_mac']}\"\n"
       else
-        @mac = host['network_mac']
-        private_network_string << ", :mac => \"#{@mac}\"\n"
+        private_network_string << "\n"
       end
     end
 
@@ -136,7 +124,6 @@ module Beaker
           else
             v_file << "    v.vm.synced_folder '.', '/vagrant', :nfs => true\n"
           end
-          v_file << "    v.vm.base_mac = '#{@mac}'\n"
         end
 
         v_file << self.class.provider_vfile_section(host, options)
