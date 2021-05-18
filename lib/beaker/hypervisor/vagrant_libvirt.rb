@@ -1,13 +1,17 @@
 require 'beaker/hypervisor/vagrant'
 
 class Beaker::VagrantLibvirt < Beaker::Vagrant
-  def provision(provider = 'libvirt')
+  def initialize(*)
+    super
+
     # This needs to be unique for every system with the same hostname but does
     # not affect VirtualBox
     vagrant_path_digest = Digest::SHA256.hexdigest(@vagrant_path)
-    @vagrant_path = @vagrant_path + '_' + vagrant_path_digest[0..2] + vagrant_path_digest[-3..-1]
+    @vagrant_path += '_' + vagrant_path_digest[0..2] + vagrant_path_digest[-3..-1]
     @vagrant_file = File.expand_path(File.join(@vagrant_path, "Vagrantfile"))
+  end
 
+  def provision(provider = 'libvirt')
     super
   end
 
