@@ -54,7 +54,7 @@ module Beaker
 
       hosts.each do |host|
         host.name.tr!('_','-') # Rewrite Hostname with hyphens instead of underscores to get legal hostname
-        host['ip'] ||= randip(host.host_hash[:hypervisor]) #use the existing ip, otherwise default to a random ip
+        set_host_default_ip(host)
         v_file << "  c.vm.define '#{host.name}' do |v|\n"
         v_file << "    v.vm.hostname = '#{host.name}'\n"
         v_file << "    v.vm.box = '#{host['box']}'\n"
@@ -64,7 +64,7 @@ module Beaker
         v_file << "    v.vm.box_check_update = '#{host['box_check_update'] ||= 'true'}'\n"
         v_file << "    v.vm.synced_folder '.', '/vagrant', disabled: true\n" if host['synced_folder'] == 'disabled'
         v_file << shell_provisioner_generator(host['shell_provisioner']) if host['shell_provisioner']
-        v_file << private_network_generator(host)
+        v_file << private_network_generator(host) if host['ip']
 
         unless host['mount_folders'].nil?
           host['mount_folders'].each do |name, folder|
@@ -310,6 +310,12 @@ module Beaker
           '1024'
         end
       end
+    end
+
+    private
+
+    def set_host_default_ip(host)
+      host['ip'] ||= randip(host.host_hash[:hypervisor]) # use the existing ip, otherwise default to a random ip
     end
   end
 end

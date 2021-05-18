@@ -2,70 +2,57 @@ require 'spec_helper'
 
 describe Beaker::VagrantDesktop do
   let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double().as_null_object }) }
-  let( :vagrant ) { Beaker::VagrantDesktop.new( @hosts, options ) }
-
-  before :each do
-    @hosts = make_hosts()
-  end
+  let( :vagrant ) { described_class.new( hosts, options ) }
+  let( :hosts ) { make_hosts }
 
   it "uses the vmware_desktop provider for provisioning" do
-    @hosts.each do |host|
+    hosts.each do |host|
       host_prev_name = host['user']
       expect( vagrant ).to receive( :set_ssh_config ).with( host, 'vagrant' ).once
       expect( vagrant ).to receive( :copy_ssh_to_root ).with( host, options ).once
       expect( vagrant ).to receive( :set_ssh_config ).with( host, host_prev_name ).once
     end
-    expect( vagrant ).to receive( :hack_etc_hosts ).with( @hosts, options ).once
+    expect( vagrant ).to receive( :hack_etc_hosts ).with( hosts, options ).once
     expect( vagrant ).to receive( :vagrant_cmd ).with( "up --provider vmware_desktop" ).once
-    vagrant.provision
+    FakeFS do
+      vagrant.provision
+    end
   end
 
-  it "can make a Vagranfile for a set of hosts" do
-    path = vagrant.instance_variable_get( :@vagrant_path )
+  context 'can make a Vagrantfile' do
+    subject do
+      FakeFS do
+        vagrant.make_vfile(hosts)
+        File.read(vagrant.instance_variable_get(:@vagrant_file))
+      end
+    end
 
-    vagrant.make_vfile( @hosts )
+    it "for a set of hosts" do
+      is_expected.to include( %Q{    v.vm.provider :vmware_desktop do |v|\n      v.vmx['memsize'] = '1024'\n    end})
+    end
 
-    vagrantfile = File.read( File.expand_path( File.join( path, "Vagrantfile")))
-    expect( vagrantfile ).to include( %Q{    v.vm.provider :vmware_desktop do |v|\n      v.vmx['memsize'] = '1024'\n    end})
-  end
+    context 'with whitelist_verified' do
+      let(:hosts) { make_hosts({:whitelist_verified => true}, 1) }
 
-  it "can enable whitelist_verified on hosts" do 
-    path = vagrant.instance_variable_get( :@vagrant_path )
-    hosts = make_hosts({:whitelist_verified => true},1)
+      it { is_expected.to include( %Q{ v.vmx['whitelist_verified'] = 'true'}) }
+    end
 
-    vagrant.make_vfile( hosts )
+    context 'with functional_hgfs' do
+      let(:hosts) { make_hosts({:functional_hgfs => true}, 1) }
 
-    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
-    expect( vagrantfile ).to include( %Q{ v.vmx['whitelist_verified'] = 'true'})
-  end
+      it { is_expected.to include( %Q{ v.vmx['functional_hgfs'] = 'true'}) }
+    end
 
-  it "can enable functional_hgfs on hosts" do 
-    path = vagrant.instance_variable_get( :@vagrant_path )
-    hosts = make_hosts({:functional_hgfs => true},1)
+    context 'with unmount_default_hgfs' do
+      let(:hosts) { make_hosts({:unmount_default_hgfs => true}, 1) }
 
-    vagrant.make_vfile( hosts )
+      it { is_expected.to include( %Q{ v.vmx['unmount_default_hgfs'] = 'true'}) }
+    end
 
-    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
-    expect( vagrantfile ).to include( %Q{ v.vmx['functional_hgfs'] = 'true'})
-  end
+    context "with gui" do
+      let(:hosts) { make_hosts({:gui => true},1) }
 
-  it "can enable unmount_default_hgfs on hosts" do 
-    path = vagrant.instance_variable_get( :@vagrant_path )
-    hosts = make_hosts({:unmount_default_hgfs => true},1)
-
-    vagrant.make_vfile( hosts )
-
-    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
-    expect( vagrantfile ).to include( %Q{ v.vmx['unmount_default_hgfs'] = 'true'})
-  end
-
-  it "can enable gui on hosts" do 
-    path = vagrant.instance_variable_get( :@vagrant_path )
-    hosts = make_hosts({:gui => true},1)
-
-    vagrant.make_vfile( hosts )
-
-    vagrantfile = File.read( File.expand_path( File.join( path, 'Vagrantfile' )))
-    expect( vagrantfile ).to include( %Q{ v.vmx['gui'] = true})
+      it { is_expected.to include( %Q{ v.vmx['gui'] = true}) }
+    end
   end
 end
