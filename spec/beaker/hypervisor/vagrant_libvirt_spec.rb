@@ -40,7 +40,7 @@ describe Beaker::VagrantLibvirt do
     end
 
     it "has no private network" do
-      is_expected.not_to include('v.vm.network :private_network')
+      is_expected.to include('v.vm.network :private_network')
     end
 
     it "can specify the memory as an integer" do
