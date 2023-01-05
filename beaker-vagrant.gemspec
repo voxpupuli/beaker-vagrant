@@ -22,9 +22,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-its'
   # pin fakefs for Ruby < 2.3
   if RUBY_VERSION < "2.3"
-    s.add_development_dependency 'fakefs', '~> 0.6', '< 0.14'
+    s.add_development_dependency 'fakefs', '>= 0.6', '< 3.0'
   else
-    s.add_development_dependency 'fakefs', '>= 0.6', '< 2.0'
+    s.add_development_dependency 'fakefs', '>= 0.6', '< 3.0'
   end
   s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'simplecov'
