@@ -10,6 +10,17 @@ env:
   BUNDLE_WITHOUT: release
 
 jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.7"
+          bundler-cache: true
+      - name: Run Rubocop
+        run: bundle exec rake rubocop
   spec:
     runs-on: ubuntu-latest
     strategy:
@@ -38,7 +49,9 @@ jobs:
       #   run: bundle exec rake test:acceptance
 
   tests:
-    needs: spec
+    needs:
+      - spec
+      - rubocop
     runs-on: ubuntu-latest
     name: Test suite
     steps:
