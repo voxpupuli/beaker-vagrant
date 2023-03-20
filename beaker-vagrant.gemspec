@@ -15,19 +15,21 @@ Gem::Specification.new do |s|
   s.required_ruby_version = Gem::Requirement.new('>= 2.7')
 
   s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   # Testing dependencies
+  s.add_development_dependency 'fakefs', '>= 0.6', '< 3.0'
+  s.add_development_dependency 'pry', '~> 0.10'
+  s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'rspec', '~> 3.0'
   s.add_development_dependency 'rspec-its'
-  s.add_development_dependency 'fakefs', '>= 0.6', '< 3.0'
-  s.add_development_dependency 'rake', '~> 13.0'
+  s.add_development_dependency 'rubocop', '~> 1.48.1'
+  s.add_development_dependency 'rubocop-performance'
+  s.add_development_dependency 'rubocop-rake'
+  s.add_development_dependency 'rubocop-rspec'
   s.add_development_dependency 'simplecov'
-  s.add_development_dependency 'pry', '~> 0.10'
-
   # Documentation dependencies
-  s.add_development_dependency 'yard'
   s.add_development_dependency 'thin'
+  s.add_development_dependency 'yard'
 end
