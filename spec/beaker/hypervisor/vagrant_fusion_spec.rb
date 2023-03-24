@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Beaker::VagrantFusion do
-  let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double().as_null_object }) }
+  let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double.as_null_object }) }
   let( :vagrant ) { described_class.new( hosts, options ) }
-  let( :hosts ) { make_hosts() }
+  let( :hosts ) { make_hosts }
 
-  it "uses the vmware_fusion provider for provisioning" do
+  it 'uses the vmware_fusion provider for provisioning' do
     hosts.each do |host|
       host_prev_name = host['user']
       expect( vagrant ).to receive( :set_ssh_config ).with( host, 'vagrant' ).once
@@ -13,7 +13,7 @@ describe Beaker::VagrantFusion do
       expect( vagrant ).to receive( :set_ssh_config ).with( host, host_prev_name ).once
     end
     expect( vagrant ).to receive( :hack_etc_hosts ).with( hosts, options ).once
-    expect( vagrant ).to receive( :vagrant_cmd ).with( "up --provider vmware_fusion" ).once
+    expect( vagrant ).to receive( :vagrant_cmd ).with( 'up --provider vmware_fusion' ).once
     vagrant.provision
   end
 
@@ -26,7 +26,7 @@ describe Beaker::VagrantFusion do
     end
 
     it 'has a provider section' do
-      is_expected.to include( %Q{    v.vm.provider :vmware_fusion do |v|\n      v.vmx['memsize'] = '1024'\n    end})
+      is_expected.to include( %(    v.vm.provider :vmware_fusion do |v|\n      v.vmx['memsize'] = '1024'\n    end))
     end
   end
 end

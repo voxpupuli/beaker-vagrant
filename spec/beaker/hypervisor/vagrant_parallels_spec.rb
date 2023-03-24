@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Beaker::VagrantParallels do
-  let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double().as_null_object }) }
+  let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double.as_null_object }) }
   let( :vagrant ) { Beaker::VagrantParallels.new( hosts, options ) }
   let( :hosts ) { make_hosts }
 
-  it "uses the parallels provider for provisioning" do
+  it 'uses the parallels provider for provisioning' do
     hosts.each do |host|
       host_prev_name = host['user']
       expect( vagrant ).to receive( :set_ssh_config ).with( host, 'vagrant' ).once
@@ -13,7 +13,7 @@ describe Beaker::VagrantParallels do
       expect( vagrant ).to receive( :set_ssh_config ).with( host, host_prev_name ).once
     end
     expect( vagrant ).to receive( :hack_etc_hosts ).with( hosts, options ).once
-    expect( vagrant ).to receive( :vagrant_cmd ).with( "up --provider parallels" ).once
+    expect( vagrant ).to receive( :vagrant_cmd ).with( 'up --provider parallels' ).once
     vagrant.provision
   end
 
@@ -25,16 +25,16 @@ describe Beaker::VagrantParallels do
       end
     end
 
-    it "can make a Vagrantfile for a set of hosts" do
-      is_expected.to include( %Q{    v.vm.provider :parallels do |prl|\n      prl.optimize_power_consumption = false\n      prl.memory = '1024'\n    end})
+    it 'can make a Vagrantfile for a set of hosts' do
+      is_expected.to include( %(    v.vm.provider :parallels do |prl|\n      prl.optimize_power_consumption = false\n      prl.memory = '1024'\n    end))
     end
   end
 
   context 'disabled guest tools' do
-    let(:options) { super().merge({ :prl_update_guest_tools => 'disable' }) }
+    let(:options) { super().merge({ prl_update_guest_tools: 'disable' }) }
     subject { vagrant.class.provider_vfile_section( hosts.first, options ) }
 
-    it "can disable the auto-update functionality of the Parallels Guest Tools" do
+    it 'can disable the auto-update functionality of the Parallels Guest Tools' do
       is_expected.to match(/prl.update_guest_tools = false/)
     end
   end
