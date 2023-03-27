@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Beaker::VagrantCustom do
-  let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double.as_null_object }) }
-  let( :vagrant ) { Beaker::VagrantCustom.new( @hosts, options ) }
+  let(:options) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double.as_null_object }) }
+  let(:vagrant) { Beaker::VagrantCustom.new(@hosts, options) }
 
   let(:test_dir) { 'tmp/tests' }
-  let(:custom_vagrant_file_path)  { File.expand_path(test_dir + '/CustomVagrantfile')   }
+  let(:custom_vagrant_file_path) { File.expand_path(test_dir + '/CustomVagrantfile') }
 
   before :each do
     @hosts = make_hosts
@@ -14,12 +14,12 @@ describe Beaker::VagrantCustom do
   it 'uses the vagrant_custom provider for provisioning' do
     @hosts.each do |host|
       host_prev_name = host['user']
-      expect( vagrant ).to receive( :set_ssh_config ).with( host, 'vagrant' ).once
-      expect( vagrant ).to receive( :copy_ssh_to_root ).with( host, options ).once
-      expect( vagrant ).to receive( :set_ssh_config ).with( host, host_prev_name ).once
+      expect(vagrant).to receive(:set_ssh_config).with(host, 'vagrant').once
+      expect(vagrant).to receive(:copy_ssh_to_root).with(host, options).once
+      expect(vagrant).to receive(:set_ssh_config).with(host, host_prev_name).once
     end
-    expect( vagrant ).to receive( :hack_etc_hosts ).with( @hosts, options ).once
-    expect( vagrant ).to receive( :vagrant_cmd ).with( 'up' ).once
+    expect(vagrant).to receive(:hack_etc_hosts).with(@hosts, options).once
+    expect(vagrant).to receive(:vagrant_cmd).with('up').once
     FakeFS do
       vagrant.provision
     end
@@ -31,8 +31,8 @@ describe Beaker::VagrantCustom do
 
       create_files([custom_vagrant_file_path])
 
-      vagrant_file_contents = <<-EOF
-FOO
+      vagrant_file_contents = <<~EOF
+        FOO
       EOF
       File.write(custom_vagrant_file_path, vagrant_file_contents)
 
@@ -42,6 +42,5 @@ FOO
       vagrant_copy_file = File.open(vagrant_copy_location, 'r')
       expect(vagrant_copy_file.read).to be === vagrant_file_contents
     end
-
   end
 end

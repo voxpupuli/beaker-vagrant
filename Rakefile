@@ -1,9 +1,7 @@
 require 'rspec/core/rake_task'
 
 namespace :test do
-
   namespace :spec do
-
     desc 'Run spec tests'
     RSpec::Core::RakeTask.new(:run) do |t|
       t.rspec_opts = ['--color', '--format documentation']
@@ -16,16 +14,13 @@ namespace :test do
       t.rspec_opts = ['--color', '--format documentation']
       t.pattern = 'spec/'
     end
-
   end
 
   namespace :acceptance do
-
-    desc <<-EOS
-A quick acceptance test, named because it has no pre-suites to run
+    desc <<~EOS
+      A quick acceptance test, named because it has no pre-suites to run
     EOS
     task :quick do
-
       # setup & load_path of beaker's acceptance base and lib directory
       beaker_gem_spec = Gem::Specification.find_by_name('beaker')
       beaker_gem_dir = beaker_gem_spec.gem_dir
@@ -39,9 +34,7 @@ A quick acceptance test, named because it has no pre-suites to run
          '--load-path', load_path_option,
          '--keyfile', ENV['KEY'] || "#{ENV.fetch('HOME', nil)}/.ssh/id_rsa")
     end
-
   end
-
 end
 
 # namespace-named default tasks.
