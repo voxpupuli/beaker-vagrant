@@ -4,8 +4,13 @@ require 'beaker-vagrant/version'
 Gem::Specification.new do |s|
   s.name        = 'beaker-vagrant'
   s.version     = BeakerVagrant::VERSION
-  s.authors     = ['Rishi Javia, Kevin Imber, Tony Vu']
-  s.email       = ['rishi.javia@puppet.com, kevin.imber@puppet.com, tony.vu@puppet.com']
+  s.authors     = [
+    'Vox Pupuli',
+    'Rishi Javia',
+    'Kevin Imber',
+    'Tony Vu',
+  ]
+  s.email       = 'voxpupuli@groups.io'
   s.homepage    = 'https://github.com/puppetlabs/beaker-vagrant'
   s.summary     = 'Beaker DSL Extension Helpers!'
   s.description = 'For use for the Beaker acceptance testing tool'

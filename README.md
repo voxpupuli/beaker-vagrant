@@ -1,10 +1,18 @@
 # beaker-vagrant
 
+[![License](https://img.shields.io/github/license/voxpupuli/beaker-vagrant.svg)](https://github.com/voxpupuli/beaker-vagrant/blob/master/LICENSE)
+[![Test](https://github.com/voxpupuli/beaker-vagrant/actions/workflows/test.yml/badge.svg)](https://github.com/voxpupuli/beaker-vagrant/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/voxpupuli/beaker-vagrant/branch/master/graph/badge.svg?token=Mypkl78hvK)](https://codecov.io/gh/voxpupuli/beaker-vagrant)
+[![Release](https://github.com/voxpupuli/beaker-vagrant/actions/workflows/release.yml/badge.svg)](https://github.com/voxpupuli/beaker-vagrant/actions/workflows/release.yml)
+[![RubyGem Version](https://img.shields.io/gem/v/beaker-vagrant.svg)](https://rubygems.org/gems/beaker-vagrant)
+[![RubyGem Downloads](https://img.shields.io/gem/dt/beaker-vagrant.svg)](https://rubygems.org/gems/beaker-vagrant)
+[![Donated by Puppet Inc](https://img.shields.io/badge/donated%20by-Puppet%20Inc-fb7047.svg)](#transfer-notice)
+
 Beaker library to use vagrant hypervisor
 
 # How to use this wizardry
 
-This is a gem that allows you to use hosts with [vagrant](docs/vagrant.md) hypervisor with [beaker](https://github.com/puppetlabs/beaker). 
+This is a gem that allows you to use hosts with [vagrant](docs/vagrant.md) hypervisor with [beaker](https://github.com/voxpupuli/beaker).
 
 ## With Beaker 3.x
 
@@ -37,15 +45,24 @@ We run beaker's base acceptance tests with this library to see if the hypervisor
 bundle exec rake test:acceptance
 ```
 
-# Contributing
+## Transfer Notice
 
-Please refer to puppetlabs/beaker's [contributing](https://github.com/puppetlabs/beaker/blob/master/CONTRIBUTING.md) guide.
+This plugin was originally authored by [Puppet Inc](http://puppet.com).
+The maintainer preferred that Puppet Community take ownership of the module for future improvement and maintenance.
+Existing pull requests and issues were transferred over, please fork and continue to contribute here.
 
-# Release
+Previously: https://github.com/puppetlabs/beaker
 
-To release new versions, we use a
-[Jenkins job](https://jenkins-sre.delivery.puppetlabs.net/view/all/job/qe_beaker-vagrant_init-multijob_master/)
-(access to internal infrastructure will be required to view job).
+## License
 
-To release a new version (from the master branch), you'll need to just provide
-a new beaker-pe version number to the job, and you're off to the races.
+This gem is licensed under the Apache-2 license.
+
+## Release information
+
+To make a new release, please do:
+* update the version in `lib/beaker-vagrant/version.rb`
+* Install gems with `bundle install --with release --path .vendor`
+* generate the changelog with `bundle exec rake changelog`
+* Check if the new version matches the closed issues/PRs in the changelog
+* Create a PR with it
+* After it got merged, push a tag. GitHub actions will do the actual release to rubygems and GitHub Packages
