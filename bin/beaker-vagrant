@@ -4,7 +4,7 @@ require 'rubygems' unless defined?(Gem)
 require 'beaker-vagrant'
 
 VERSION_STRING =
-"
+  "
                                  _ .--.
                                 ( `    )
         beaker-vagrant        .-'      `--,
@@ -24,8 +24,6 @@ VERSION_STRING =
                      |\"\"|
                      '=='
 "
-
-
 
 puts BeakerVagrant::Version
 

@@ -5,6 +5,3 @@ inherit_gem:
 
 Metrics:
   Enabled: false
-
-Layout:
-  Enabled: false
