@@ -29,7 +29,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rubocop-rake'
   s.add_development_dependency 'rubocop-rspec'
   s.add_development_dependency 'simplecov'
-  # Documentation dependencies
-  s.add_development_dependency 'thin'
-  s.add_development_dependency 'yard'
 end
