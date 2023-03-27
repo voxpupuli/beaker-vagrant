@@ -6,7 +6,7 @@ module Beaker
     end
 
     def required_keys_present?
-      not from.nil? and not to.nil?
+      !from.nil? and !to.nil?
     end
 
     def from

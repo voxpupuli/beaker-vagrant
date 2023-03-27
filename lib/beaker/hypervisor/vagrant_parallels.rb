@@ -6,7 +6,7 @@ class Beaker::VagrantParallels < Beaker::Vagrant
   end
 
   def self.provider_vfile_section(host, options)
-    provider_section  = ""
+    provider_section  = ''
     provider_section << "    v.vm.provider :parallels do |prl|\n"
     provider_section << "      prl.optimize_power_consumption = false\n"
     provider_section << "      prl.memory = '#{memsize(host,options)}'\n"

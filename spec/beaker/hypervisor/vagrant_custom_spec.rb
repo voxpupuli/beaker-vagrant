@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 describe Beaker::VagrantCustom do
-  let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double().as_null_object }) }
+  let( :options ) { make_opts.merge({ :hosts_file => 'sample.cfg', 'logger' => double.as_null_object }) }
   let( :vagrant ) { Beaker::VagrantCustom.new( @hosts, options ) }
 
   let(:test_dir) { 'tmp/tests' }
   let(:custom_vagrant_file_path)  { File.expand_path(test_dir + '/CustomVagrantfile')   }
 
   before :each do
-    @hosts = make_hosts()
+    @hosts = make_hosts
   end
 
-  it "uses the vagrant_custom provider for provisioning" do
+  it 'uses the vagrant_custom provider for provisioning' do
     @hosts.each do |host|
       host_prev_name = host['user']
       expect( vagrant ).to receive( :set_ssh_config ).with( host, 'vagrant' ).once
@@ -19,7 +19,7 @@ describe Beaker::VagrantCustom do
       expect( vagrant ).to receive( :set_ssh_config ).with( host, host_prev_name ).once
     end
     expect( vagrant ).to receive( :hack_etc_hosts ).with( @hosts, options ).once
-    expect( vagrant ).to receive( :vagrant_cmd ).with( "up" ).once
+    expect( vagrant ).to receive( :vagrant_cmd ).with( 'up' ).once
     FakeFS do
       vagrant.provision
     end
@@ -27,14 +27,14 @@ describe Beaker::VagrantCustom do
 
   context 'takes vagrant configuration from existing file' do
     it 'writes the vagrant file to the correct location' do
-      options.merge!({ :vagrantfile_path => custom_vagrant_file_path })
+      options.merge!({ vagrantfile_path: custom_vagrant_file_path })
 
       create_files([custom_vagrant_file_path])
 
       vagrant_file_contents = <<-EOF
 FOO
       EOF
-      File.open(custom_vagrant_file_path, 'w') { |file| file.write(vagrant_file_contents) }
+      File.write(custom_vagrant_file_path, vagrant_file_contents)
 
       vagrant_copy_location = "#{test_dir}/NewVagrantLocation"
       vagrant.instance_variable_set(:@vagrant_file, vagrant_copy_location)

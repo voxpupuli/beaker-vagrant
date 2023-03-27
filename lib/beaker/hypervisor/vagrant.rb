@@ -7,7 +7,7 @@ module Beaker
     require 'beaker/hypervisor/vagrant_virtualbox'
 
     def rand_chunk
-      (2 + rand(252)).to_s #don't want a 0, 1, or a 255
+      rand(2..254).to_s # don't want a 0, 1, or a 255
     end
 
     def randip(hypervisor=nil)
@@ -20,12 +20,12 @@ module Beaker
     end
 
     def private_network_generator(host)
-      private_network_string = "    v.vm.network :private_network, ip: \"#{host['ip'].to_s}\", :netmask => \"#{host['netmask'] ||= "255.255.0.0"}\""
-      if host['network_mac']
-        private_network_string << ", :mac => \"#{host['network_mac']}\"\n"
+      private_network_string = "    v.vm.network :private_network, ip: \"#{host['ip'].to_s}\", :netmask => \"#{host['netmask'] ||= '255.255.0.0'}\""
+      private_network_string << if host['network_mac']
+        ", :mac => \"#{host['network_mac']}\"\n"
       else
-        private_network_string << "\n"
-      end
+        "\n"
+                                end
     end
 
     def connection_preference(host)
@@ -33,20 +33,16 @@ module Beaker
     end
 
     def shell_provisioner_generator(provisioner_config)
-      unless provisioner_config['path'].nil? || provisioner_config['path'].empty?
-        unless provisioner_config['args'].nil?
-          shell_provisioner_string = "    v.vm.provision 'shell', :path => '#{provisioner_config['path']}', :args => '#{provisioner_config['args']}' \n"
-        else
-          shell_provisioner_string = "    v.vm.provision 'shell', :path => '#{provisioner_config['path']}'\n"
+      raise 'No path defined for shell_provisioner or path empty' if provisioner_config['path'].nil? || provisioner_config['path'].empty?
+        if provisioner_config['args'].nil?
+          "    v.vm.provision 'shell', :path => '#{provisioner_config['path']}'\n"
+                                   else
+          "    v.vm.provision 'shell', :path => '#{provisioner_config['path']}', :args => '#{provisioner_config['args']}' \n"
         end
-        shell_provisioner_string
-      else
-        raise "No path defined for shell_provisioner or path empty"
-      end
     end
 
-    def make_vfile hosts, options = {}
-      #HACK HACK HACK - add checks here to ensure that we have box + box_url
+    def make_vfile(hosts, options = {})
+      #HACK: HACK HACK - add checks here to ensure that we have box + box_url
       #generate the VagrantFile
       v_file = "Vagrant.configure(\"2\") do |c|\n"
       v_file << "  c.ssh.forward_agent = true\n" if options[:forward_ssh_agent] == true
@@ -79,7 +75,7 @@ module Beaker
 
         unless host['forwarded_ports'].nil?
           host['forwarded_ports'].each do |_name, port|
-            fwd = "    v.vm.network :forwarded_port,"
+            fwd = '    v.vm.network :forwarded_port,'
             fwd << " protocol: '#{port[:protocol]}'," unless port[:protocol].nil?
             fwd << " guest_ip: '#{port[:to_ip]}'," unless port[:to_ip].nil?
             fwd << " guest: #{port[:to]},"
@@ -119,11 +115,11 @@ module Beaker
           # http://www.secnetix.de/olli/FreeBSD/mnamelen.hawk
           # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=167105
           #
-          if host['vagrant_freebsd_nfs'].nil?
-            v_file << "    v.vm.synced_folder '.', '/vagrant', type: 'rsync'\n"
+          v_file << if host['vagrant_freebsd_nfs'].nil?
+            "    v.vm.synced_folder '.', '/vagrant', type: 'rsync'\n"
           else
-            v_file << "    v.vm.synced_folder '.', '/vagrant', :nfs => true\n"
-          end
+            "    v.vm.synced_folder '.', '/vagrant', :nfs => true\n"
+                    end
         end
 
         v_file << self.class.provider_vfile_section(host, options)
@@ -135,18 +131,16 @@ module Beaker
 
       # In case this is called directly
       FileUtils.mkdir_p(@vagrant_path)
-      File.open(@vagrant_file, 'w') do |f|
-        f.write(v_file)
-      end
+      File.write(@vagrant_file, v_file)
     end
 
-    def self.provider_vfile_section host, options
+    def self.provider_vfile_section(host, options)
       # Backwards compatibility; default to virtualbox
       Beaker::VagrantVirtualbox.provider_vfile_section(host, options)
     end
 
     def set_all_ssh_config
-      @logger.debug "configure vagrant boxes (set ssh-config, switch to root user, hack etc/hosts)"
+      @logger.debug 'configure vagrant boxes (set ssh-config, switch to root user, hack etc/hosts)'
       @hosts.each do |host|
         if host[:platform] =~ /windows/
           @logger.debug "skip ssh hacks on windows box #{host[:name]}"
@@ -179,14 +173,12 @@ module Beaker
       hack_etc_hosts @hosts, @options
     end
 
-    def set_ssh_config host, user
+    def set_ssh_config(host, user)
       return unless Dir.exist?(@vagrant_path)
 
       ssh_config = Dir.chdir(@vagrant_path) do
         stdout, _, status = Open3.capture3(@vagrant_env, 'vagrant', 'ssh-config', host.name)
-        unless status.success?
-          raise "Failed to 'vagrant ssh-config' for #{host.name}"
-        end
+        raise "Failed to 'vagrant ssh-config' for #{host.name}" unless status.success?
 
         Tempfile.create do |f|
           f.write(stdout)
@@ -209,15 +201,13 @@ module Beaker
       @logger = options[:logger]
       @hosts = vagrant_hosts
       @vagrant_path = File.expand_path(File.join('.vagrant', 'beaker_vagrant_files', 'beaker_' + File.basename(options[:hosts_file])))
-      @vagrant_file = File.expand_path(File.join(@vagrant_path, "Vagrantfile"))
-      @vagrant_env = { "RUBYLIB" => "", "RUBYOPT" => "" }
+      @vagrant_file = File.expand_path(File.join(@vagrant_path, 'Vagrantfile'))
+      @vagrant_env = { 'RUBYLIB' => '', 'RUBYOPT' => '' }
     end
 
     def configure(opts = {})
       unless @options[:provision]
-        unless File.file?(@vagrant_file)
-          raise "Beaker is configured with provision = false but no vagrant file was found at #{@vagrant_file}. You need to enable provision"
-        end
+        raise "Beaker is configured with provision = false but no vagrant file was found at #{@vagrant_file}. You need to enable provision" unless File.file?(@vagrant_file)
 
         set_all_ssh_config
       end
@@ -230,10 +220,10 @@ module Beaker
       #setting up new vagrant hosts
       #make sure that any old boxes are dead dead dead
       begin
-        vagrant_cmd("destroy --force") if File.file?(@vagrant_file)
+        vagrant_cmd('destroy --force') if File.file?(@vagrant_file)
       rescue RuntimeError => e
         # LATER: use <<~MESSAGE once we're on Ruby 2.3
-        @logger.debug(%Q{
+        @logger.debug(%(
           Beaker failed to destroy the existing VM's. If you think this is
           an error or you upgraded from an older version of beaker try
           verifying the VM exists and deleting the existing Vagrantfile if
@@ -243,7 +233,7 @@ module Beaker
           vagrant status
           vagrant destroy # only need to run this is a VM is not created
           rm #{@vagrant_file} # only do this if all VM's are actually destroyed
-        }.each_line.map(&:strip).join("\n"))
+        ).each_line.map(&:strip).join("\n"))
         raise e
       end
 
@@ -255,26 +245,23 @@ module Beaker
     end
 
     def cleanup
-      @logger.debug "removing temporary ssh-config files per-vagrant box"
-      @logger.notify "Destroying vagrant boxes"
-      vagrant_cmd("destroy --force")
+      @logger.debug 'removing temporary ssh-config files per-vagrant box'
+      @logger.notify 'Destroying vagrant boxes'
+      vagrant_cmd('destroy --force')
       FileUtils.rm_rf(@vagrant_path)
     end
 
     def vagrant_cmd(args)
       Dir.chdir(@vagrant_path) do
-        begin
           retries ||=0
-          Open3.popen3(@vagrant_env, "vagrant #{args}") {|stdin, stdout, stderr, wait_thr|
+          Open3.popen3(@vagrant_env, "vagrant #{args}") do |stdin, stdout, stderr, wait_thr|
             while line = stdout.gets
               @logger.info(line)
             end
 
-            unless wait_thr.value.success?
-              raise "Failed to exec 'vagrant #{args}'. Error was #{stderr.read}"
-            end
-          }
-        rescue => e
+            raise "Failed to exec 'vagrant #{args}'. Error was #{stderr.read}" unless wait_thr.value.success?
+          end
+        rescue StandardError => e
           if e.to_s =~ /WinRM/m
             sleep(10)
 
@@ -282,15 +269,13 @@ module Beaker
           end
 
           raise e
-        end
       end
     end
 
     def self.cpus(host, options)
-      case
-      when host['vagrant_cpus']
+      if host['vagrant_cpus']
         host['vagrant_cpus']
-      when options['vagrant_cpus']
+      elsif options['vagrant_cpus']
         options['vagrant_cpus']
       else
         '1'
@@ -298,17 +283,14 @@ module Beaker
     end
 
     def self.memsize(host, options)
-      case
-      when host['vagrant_memsize']
+      if host['vagrant_memsize']
         host['vagrant_memsize']
-      when options['vagrant_memsize']
+      elsif options['vagrant_memsize']
         options['vagrant_memsize']
-      else
-        if host['platform'] =~ /windows/
-          '2048'
+      elsif host['platform'] =~ /windows/
+        '2048'
         else
           '1024'
-        end
       end
     end
 
