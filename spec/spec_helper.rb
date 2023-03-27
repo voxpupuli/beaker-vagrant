@@ -1,5 +1,4 @@
 require 'simplecov'
-require 'rspec/its'
 require 'beaker'
 
 Dir.glob(Dir.pwd + '/lib/beaker/hypervisor/*.rb') {|file| require file}
