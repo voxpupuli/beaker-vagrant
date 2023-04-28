@@ -30,5 +30,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'voxpupuli-rubocop', '~> 1.1'
 
-  s.add_runtime_dependency 'beaker', '~> 5'
+  s.add_runtime_dependency 'beaker', '>= 4', '< 6'
 end
