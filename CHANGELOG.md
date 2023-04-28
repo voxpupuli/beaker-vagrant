@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0](https://github.com/voxpupuli/beaker-vagrant/tree/1.1.0) (2023-04-28)
+
+[Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.0.0...1.1.0)
+
+**Implemented enhancements:**
+
+- Use Bundler to clean the environment [\#73](https://github.com/voxpupuli/beaker-vagrant/pull/73) ([ekohl](https://github.com/ekohl))
+- Switch to voxpupuli-rubocop [\#72](https://github.com/voxpupuli/beaker-vagrant/pull/72) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [1.0.0](https://github.com/voxpupuli/beaker-vagrant/tree/1.0.0) (2023-03-27)
 
 [Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/0.7.1...1.0.0)
