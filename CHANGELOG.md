@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/voxpupuli/beaker-vagrant/tree/1.2.0) (2023-04-28)
+
+[Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.1.0...1.2.0)
+
+**Implemented enhancements:**
+
+- Allow beaker 4 again [\#75](https://github.com/voxpupuli/beaker-vagrant/pull/75) ([ekohl](https://github.com/ekohl))
+
+**Merged pull requests:**
+
+- Switch to voxpupuli-rubocop + Rake task from voxpupuli-rubocop [\#69](https://github.com/voxpupuli/beaker-vagrant/pull/69) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [1.1.0](https://github.com/voxpupuli/beaker-vagrant/tree/1.1.0) (2023-04-28)
 
 [Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.0.0...1.1.0)
