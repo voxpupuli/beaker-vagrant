@@ -181,7 +181,7 @@ module Beaker
       return unless Dir.exist?(@vagrant_path)
 
       ssh_config = Dir.chdir(@vagrant_path) do
-        stdout, _, status = Open3.capture3(@vagrant_env, 'vagrant', 'ssh-config', host.name)
+        stdout, _, status = with_unbundled_env { Open3.capture3(@vagrant_env, 'vagrant', 'ssh-config', host.name) }
         raise "Failed to 'vagrant ssh-config' for #{host.name}" unless status.success?
 
         Tempfile.create do |f|
@@ -207,7 +207,7 @@ module Beaker
       @vagrant_path = File.expand_path(File.join('.vagrant', 'beaker_vagrant_files',
                                                  'beaker_' + File.basename(options[:hosts_file])))
       @vagrant_file = File.expand_path(File.join(@vagrant_path, 'Vagrantfile'))
-      @vagrant_env = { 'RUBYLIB' => '', 'RUBYOPT' => '' }
+      @vagrant_env = {}
     end
 
     def configure(opts = {})
@@ -261,12 +261,14 @@ module Beaker
     def vagrant_cmd(args)
       Dir.chdir(@vagrant_path) do
         retries ||= 0
-        Open3.popen3(@vagrant_env, "vagrant #{args}") do |stdin, stdout, stderr, wait_thr|
-          while line = stdout.gets
-            @logger.info(line)
-          end
+        with_unbundled_env do
+          Open3.popen3(@vagrant_env, "vagrant #{args}") do |stdin, stdout, stderr, wait_thr|
+            while line = stdout.gets
+              @logger.info(line)
+            end
 
-          raise "Failed to exec 'vagrant #{args}'. Error was #{stderr.read}" unless wait_thr.value.success?
+            raise "Failed to exec 'vagrant #{args}'. Error was #{stderr.read}" unless wait_thr.value.success?
+          end
         end
       rescue StandardError => e
         if e.to_s =~ /WinRM/m
@@ -305,6 +307,14 @@ module Beaker
 
     def set_host_default_ip(host)
       host['ip'] ||= randip(host.host_hash[:hypervisor]) # use the existing ip, otherwise default to a random ip
+    end
+
+    def with_unbundled_env(&block)
+      if defined?(::Bundler)
+        Bundler.with_unbundled_env(&block)
+      else
+        yield
+      end
     end
   end
 end

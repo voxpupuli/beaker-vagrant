@@ -433,8 +433,7 @@ module Beaker
           vagrant.instance_variable_set(:@vagrant_path, dir)
           state = double('state')
           allow(state).to receive(:success?).and_return(true)
-          allow(Open3).to receive(:capture3).with({ 'RUBYLIB' => '', 'RUBYOPT' => '' }, 'vagrant', 'ssh-config',
-                                                  name).and_return([out, '', state])
+          allow(Open3).to receive(:capture3).with({}, 'vagrant', 'ssh-config', name).and_return([out, '', state])
 
           vagrant.set_ssh_config(host, 'root')
         end
