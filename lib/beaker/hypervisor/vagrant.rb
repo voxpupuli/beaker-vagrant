@@ -204,8 +204,12 @@ module Beaker
       @options = options
       @logger = options[:logger]
       @hosts = vagrant_hosts
-      @vagrant_path = File.expand_path(File.join('.vagrant', 'beaker_vagrant_files',
-                                                 'beaker_' + File.basename(options[:hosts_file])))
+      vagrant_directory = if options[:hosts_file_generated]
+                            "beaker_hostgenerator_#{@hosts.map(&:name).join('-')}"
+                          else
+                            "beaker_#{File.basename(options[:hosts_file])}"
+                          end
+      @vagrant_path = File.expand_path(File.join('.vagrant', 'beaker_vagrant_files', vagrant_directory))
       @vagrant_file = File.expand_path(File.join(@vagrant_path, 'Vagrantfile'))
       @vagrant_env = {}
     end
