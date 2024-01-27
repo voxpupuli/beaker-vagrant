@@ -91,7 +91,8 @@ module Beaker
           end
         end
 
-        if /windows/i.match(host['platform'])
+        case host['platform']
+        when /windows/i
           # due to a regression bug in versions of vagrant 1.6.2, 1.6.3, 1.6.4, >= 1.7.3 ssh fails to forward
           # automatically (note <=1.6.1, 1.6.5, 1.7.0 - 1.7.2 are uneffected)
           # Explicitly setting SSH port forwarding due to this bug
@@ -100,14 +101,10 @@ module Beaker
           v_file << "    v.vm.network :forwarded_port, guest: 5985, host: 5985, id: 'winrm', auto_correct: true\n"
           v_file << "    v.vm.guest = :windows\n"
           v_file << "    v.vm.communicator = 'winrm'\n"
-        end
-
-        if /osx/i.match(host['platform'])
+        when /osx/i
           v_file << "    v.vm.network 'private_network', ip: '10.0.1.10'\n"
           v_file << "    v.vm.synced_folder '.', '/vagrant', :nfs => true\n"
-        end
-
-        if /freebsd/i.match(host['platform'])
+        when /freebsd/i
           v_file << "    v.ssh.shell = 'sh'\n"
           v_file << "    v.vm.guest = :freebsd\n"
 
