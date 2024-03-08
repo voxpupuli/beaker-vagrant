@@ -78,7 +78,7 @@ module Beaker
         end
 
         unless host['forwarded_ports'].nil?
-          host['forwarded_ports'].each do |_name, port|
+          host['forwarded_ports'].each_value do |port|
             fwd = '    v.vm.network :forwarded_port,'
             fwd << " protocol: '#{port[:protocol]}'," unless port[:protocol].nil?
             fwd << " guest_ip: '#{port[:to_ip]}'," unless port[:to_ip].nil?
