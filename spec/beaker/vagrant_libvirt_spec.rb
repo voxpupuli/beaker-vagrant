@@ -37,23 +37,23 @@ describe Beaker::VagrantLibvirt do
     end
 
     it 'has a provider section' do
-      is_expected.to include(%(    v.vm.provider :libvirt do |node|))
+      expect(subject).to include(%(    v.vm.provider :libvirt do |node|))
     end
 
     it 'has no private network' do
-      is_expected.to include('v.vm.network :private_network')
+      expect(subject).to include('v.vm.network :private_network')
     end
 
     it 'can specify the memory as an integer' do
-      is_expected.to include('node.memory = 1024')
+      expect(subject).to include('node.memory = 1024')
     end
 
     it 'can specify the number of cpus' do
-      is_expected.to include('node.cpus = 2')
+      expect(subject).to include('node.cpus = 2')
     end
 
     it 'can specify any libvirt option' do
-      is_expected.to include("node.uri = 'qemu+ssh://root@host/system'")
+      expect(subject).to include("node.uri = 'qemu+ssh://root@host/system'")
     end
   end
 end

@@ -7,7 +7,7 @@ describe Beaker::VagrantCustom do
   let(:test_dir) { 'tmp/tests' }
   let(:custom_vagrant_file_path) { File.expand_path(test_dir + '/CustomVagrantfile') }
 
-  before :each do
+  before do
     @hosts = make_hosts
   end
 

@@ -5,7 +5,7 @@ class Beaker::VagrantCustom < Beaker::Vagrant
     super
   end
 
-  def make_vfile(hosts, options = {})
+  def make_vfile(_hosts, _options = {})
     FileUtils.mkdir_p(@vagrant_path)
     FileUtils.cp(@options[:vagrantfile_path], @vagrant_file)
   end

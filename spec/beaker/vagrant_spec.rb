@@ -13,18 +13,18 @@ module Beaker
 
     let(:vagrant) { Beaker::Vagrant.new(@hosts, options) }
 
-    before :each do
+    before do
       @hosts = make_hosts({
                             mount_folders: {
                               test_temp: { from: './', to: '/temp' },
-                              test_tmp: { from: '../', to: '/tmp' }
+                              test_tmp: { from: '../', to: '/tmp' },
                             },
                             forwarded_ports: {
                               http: { from: 10_080, to: 80 },
                               ssl: { from: 4443, to: 443 },
-                              tomcat: { from: 8080, to: 8080 }
+                              tomcat: { from: 8080, to: 8080 },
                             },
-                            platform: Beaker::Platform.new('centos-8-x86_64')
+                            platform: Beaker::Platform.new('centos-8-x86_64'),
                           })
     end
 
@@ -107,7 +107,7 @@ module Beaker
       path = vagrant.instance_variable_get(:@vagrant_path)
 
       host = make_host('name-with_underscore', {})
-      vagrant.make_vfile([host,], options)
+      vagrant.make_vfile([host], options)
 
       vagrantfile = File.read(File.expand_path(File.join(path, 'Vagrantfile')))
       expect(vagrantfile).to match(/v.vm.hostname = .*name-with-underscore/)
@@ -140,7 +140,7 @@ module Beaker
                            test_invalid1: { host_path: '/invalid1', container_path: '/invalid1' },
                            test_invalid2: { from: '/invalid2', container_path: '/invalid2' },
                            test_invalid3: { host_path: '/invalid3', to: '/invalid3' },
-                           test_valid: { from: '/valid', to: '/valid' }
+                           test_valid: { from: '/valid', to: '/valid' },
                          } }, 1)
       vagrant.make_vfile(hosts, options)
 
@@ -158,8 +158,8 @@ module Beaker
       shell_path = '/path/to/shell/script'
       hosts = make_hosts({
                            shell_provisioner: {
-                             path: shell_path
-                           }
+                             path: shell_path,
+                           },
                          }, 1)
       vagrant.make_vfile(hosts, options)
 
@@ -175,8 +175,8 @@ module Beaker
       hosts = make_hosts({
                            shell_provisioner: {
                              path: shell_path,
-                             args: shell_args
-                           }
+                             args: shell_args,
+                           },
                          }, 1)
       vagrant.make_vfile(hosts, options)
 
@@ -199,8 +199,8 @@ module Beaker
       empty_shell_path = ''
       hosts = make_hosts({
                            shell_provisioner: {
-                             path: empty_shell_path
-                           }
+                             path: empty_shell_path,
+                           },
                          }, 1)
       expect do
         vagrant.make_vfile(hosts, options)
@@ -218,23 +218,23 @@ module Beaker
       end
 
       it 'has the proper port forwarding for RDP' do
-        expect(@generated_file).to match /v.vm.network :forwarded_port, guest: 3389, host: 3389, id: 'rdp', auto_correct: true/
+        expect(@generated_file).to match(/v.vm.network :forwarded_port, guest: 3389, host: 3389, id: 'rdp', auto_correct: true/)
       end
 
       it 'has the proper port forwarding for WinRM' do
-        expect(@generated_file).to match /v.vm.network :forwarded_port, guest: 5985, host: 5985, id: 'winrm', auto_correct: true/
+        expect(@generated_file).to match(/v.vm.network :forwarded_port, guest: 5985, host: 5985, id: 'winrm', auto_correct: true/)
       end
 
       it 'configures the guest type to windows' do
-        expect(@generated_file).to match /v.vm.guest = :windows/
+        expect(@generated_file).to match(/v.vm.guest = :windows/)
       end
 
       it 'configures the guest type to use winrm' do
-        expect(@generated_file).to match /v.vm.communicator = 'winrm'/
+        expect(@generated_file).to match(/v.vm.communicator = 'winrm'/)
       end
 
       it 'sets a non-default memsize' do
-        expect(@generated_file).to match /'--memory', '2048',/
+        expect(@generated_file).to match(/'--memory', '2048',/)
       end
     end
 
@@ -249,11 +249,11 @@ module Beaker
       end
 
       it 'has the proper ssh shell' do
-        expect(@generated_file).to match /v.ssh.shell = 'sh'\n/
+        expect(@generated_file).to match(/v.ssh.shell = 'sh'\n/)
       end
 
       it 'has the proper guest setting' do
-        expect(@generated_file).to match /v.vm.guest = :freebsd\n/
+        expect(@generated_file).to match(/v.vm.guest = :freebsd\n/)
       end
     end
 
@@ -266,7 +266,7 @@ module Beaker
 
       match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', 'hello!', '--cpus', '1', '--audio', 'none'\]/)
 
-      expect(match).to_not be nil
+      expect(match).not_to be_nil
     end
 
     it 'uses the cpus defined per vagrant host' do
@@ -278,7 +278,7 @@ module Beaker
 
       match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', '1024', '--cpus', 'goodbye!', '--audio', 'none'\]/)
 
-      expect(match).to_not be nil
+      expect(match).not_to be_nil
     end
 
     context 'port forwarding rules' do
@@ -293,9 +293,9 @@ module Beaker
                 from_ip: '127.0.0.1',
                 to: 80,
                 to_ip: '0.0.0.0',
-                protocol: 'udp'
-              }
-            }
+                protocol: 'udp',
+              },
+            },
           }, 1
         )
         vagrant.make_vfile(hosts, options)
@@ -314,8 +314,8 @@ module Beaker
                 from: 10_080,
                 from_ip: '127.0.0.1',
                 to: 80,
-              }
-            }
+              },
+            },
           }, 1
         )
         vagrant.make_vfile(hosts, options)
@@ -334,8 +334,8 @@ module Beaker
                 from: 10_080,
                 to: 80,
                 to_ip: '0.0.0.0',
-              }
-            }
+              },
+            },
           }, 1
         )
         vagrant.make_vfile(hosts, options)
@@ -353,9 +353,9 @@ module Beaker
               http: {
                 from: 10_080,
                 to: 80,
-                protocol: 'udp'
-              }
-            }
+                protocol: 'udp',
+              },
+            },
           }, 1
         )
         vagrant.make_vfile(hosts, options)
@@ -392,7 +392,7 @@ module Beaker
         host[:platform] = 'windows'
         expect(host).to receive(:is_cygwin?).and_return(true)
 
-        expect(Command).to_not receive(:new).with('sudo fixfiles restore /root')
+        expect(Command).not_to receive(:new).with('sudo fixfiles restore /root')
         expect(Command).to receive(:new).with('cp -r .ssh /cygdrive/c/Users/Administrator/.').once
         expect(Command).to receive(:new).with('chown -R Administrator /cygdrive/c/Users/Administrator/.ssh').once
 
@@ -425,7 +425,7 @@ module Beaker
       let(:name) { host.name }
       let(:override_options) { {} }
 
-      before :each do
+      before do
         # FakeFS is just broken with Tempfile
         FakeFS.deactivate!
         Dir.mktmpdir do |dir|
@@ -457,7 +457,7 @@ module Beaker
           { forward_ssh_agent: false }
         end
 
-        it 'should keep IdentitiesOnly to yes' do
+        it 'keeps IdentitiesOnly to yes' do
           expect(host['ssh'][:keys_only]).to be === true
         end
       end
@@ -516,7 +516,7 @@ module Beaker
     end
 
     describe 'provisioning and cleanup' do
-      before :each do
+      before do
         expect(vagrant).to receive(:vagrant_cmd).with('up').once
         @hosts.each do |host|
           host_prev_name = host['user']
@@ -530,7 +530,7 @@ module Beaker
       it 'can provision a set of hosts' do
         options = vagrant.instance_variable_get(:@options)
         expect(vagrant).to receive(:make_vfile).with(@hosts, options).once
-        expect(vagrant).to receive(:vagrant_cmd).with('destroy --force').never
+        expect(vagrant).not_to receive(:vagrant_cmd).with('destroy --force')
         vagrant.provision
       end
 
@@ -557,7 +557,7 @@ module Beaker
     end
 
     describe 'provisioning and cleanup on windows' do
-      before :each do
+      before do
         expect(vagrant).to receive(:vagrant_cmd).with('up').once
         @hosts.each do |host|
           host[:platform] = 'windows'
@@ -572,7 +572,7 @@ module Beaker
       it 'can provision a set of hosts' do
         options = vagrant.instance_variable_get(:@options)
         expect(vagrant).to receive(:make_vfile).with(@hosts, options).once
-        expect(vagrant).to receive(:vagrant_cmd).with('destroy --force').never
+        expect(vagrant).not_to receive(:vagrant_cmd).with('destroy --force')
         vagrant.provision
       end
 
