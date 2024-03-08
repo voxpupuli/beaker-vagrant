@@ -26,16 +26,17 @@ describe Beaker::VagrantParallels do
     end
 
     it 'can make a Vagrantfile for a set of hosts' do
-      is_expected.to include(%(    v.vm.provider :parallels do |prl|\n      prl.optimize_power_consumption = false\n      prl.memory = '1024'\n    end))
+      expect(subject).to include(%(    v.vm.provider :parallels do |prl|\n      prl.optimize_power_consumption = false\n      prl.memory = '1024'\n    end))
     end
   end
 
   context 'disabled guest tools' do
-    let(:options) { super().merge({ prl_update_guest_tools: 'disable' }) }
     subject { vagrant.class.provider_vfile_section(hosts.first, options) }
 
+    let(:options) { super().merge({ prl_update_guest_tools: 'disable' }) }
+
     it 'can disable the auto-update functionality of the Parallels Guest Tools' do
-      is_expected.to match(/prl.update_guest_tools = false/)
+      expect(subject).to match(/prl.update_guest_tools = false/)
     end
   end
 end
