@@ -19,7 +19,7 @@ module Beaker
     end
 
     def private_network_generator(host)
-      private_network_string = "    v.vm.network :private_network, ip: \"#{host['ip'].to_s}\", :netmask => \"#{host['netmask'] ||= '255.255.0.0'}\""
+      private_network_string = "    v.vm.network :private_network, ip: \"#{host['ip']}\", :netmask => \"#{host['netmask'] ||= '255.255.0.0'}\""
       private_network_string << if host['network_mac']
                                   ", :mac => \"#{host['network_mac']}\"\n"
                                 else
@@ -27,7 +27,7 @@ module Beaker
                                 end
     end
 
-    def connection_preference(host)
+    def connection_preference(_host)
       [:hostname]
     end
 
@@ -91,7 +91,7 @@ module Beaker
           end
         end
 
-        if /windows/i.match(host['platform'])
+        if /windows/i.match?(host['platform'])
           # due to a regression bug in versions of vagrant 1.6.2, 1.6.3, 1.6.4, >= 1.7.3 ssh fails to forward
           # automatically (note <=1.6.1, 1.6.5, 1.7.0 - 1.7.2 are uneffected)
           # Explicitly setting SSH port forwarding due to this bug
@@ -102,12 +102,12 @@ module Beaker
           v_file << "    v.vm.communicator = 'winrm'\n"
         end
 
-        if /osx/i.match(host['platform'])
+        if /osx/i.match?(host['platform'])
           v_file << "    v.vm.network 'private_network', ip: '10.0.1.10'\n"
           v_file << "    v.vm.synced_folder '.', '/vagrant', :nfs => true\n"
         end
 
-        if /freebsd/i.match(host['platform'])
+        if /freebsd/i.match?(host['platform'])
           v_file << "    v.ssh.shell = 'sh'\n"
           v_file << "    v.vm.guest = :freebsd\n"
 
@@ -146,7 +146,7 @@ module Beaker
     def set_all_ssh_config
       @logger.debug 'configure vagrant boxes (set ssh-config, switch to root user, hack etc/hosts)'
       @hosts.each do |host|
-        if host[:platform] =~ /windows/
+        if /windows/.match?(host[:platform])
           @logger.debug "skip ssh hacks on windows box #{host[:name]}"
           set_ssh_config host, host['user']
           next
@@ -266,7 +266,7 @@ module Beaker
       Dir.chdir(@vagrant_path) do
         retries ||= 0
         with_unbundled_env do
-          Open3.popen3(@vagrant_env, "vagrant #{args}") do |stdin, stdout, stderr, wait_thr|
+          Open3.popen3(@vagrant_env, "vagrant #{args}") do |_stdin, stdout, stderr, wait_thr|
             while line = stdout.gets
               @logger.info(line)
             end
@@ -275,7 +275,7 @@ module Beaker
           end
         end
       rescue StandardError => e
-        if e.to_s =~ /WinRM/m
+        if /WinRM/m.match?(e.to_s)
           sleep(10)
 
           retry if (retries += 1) < 6
@@ -300,7 +300,7 @@ module Beaker
         host['vagrant_memsize']
       elsif options['vagrant_memsize']
         options['vagrant_memsize']
-      elsif host['platform'] =~ /windows/
+      elsif /windows/.match?(host['platform'])
         '2048'
       else
         '1024'

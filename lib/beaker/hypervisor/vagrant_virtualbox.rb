@@ -5,7 +5,7 @@ class Beaker::VagrantVirtualbox < Beaker::Vagrant
     LSILogic: ['--add', 'scsi', '--portcount', '16', '--controller', 'LSILogic', '--bootable', 'off'],
     IntelAHCI: ['--add', 'sata', '--portcount', '2', '--controller', 'IntelAHCI', '--bootable', 'off'],
     PIIX4: ['--add', 'ide', '--portcount', '2', '--controller', 'PIIX4', '--bootable', 'off'],
-    USB: ['--add', 'usb', '--portcount', '8', '--controller', 'USB', '--bootable', 'off']
+    USB: ['--add', 'usb', '--portcount', '8', '--controller', 'USB', '--bootable', 'off'],
   }.freeze
 
   def provision(provider = 'virtualbox')
@@ -14,12 +14,12 @@ class Beaker::VagrantVirtualbox < Beaker::Vagrant
 
   # Generate a VM customization string
   def self.vb_customize(command, args)
-    "      vb.customize ['#{command}', #{args.map { |a| "'#{a.to_s}'" }.join(', ')}]\n"
+    "      vb.customize ['#{command}', #{args.map { |a| "'#{a}'" }.join(', ')}]\n"
   end
 
   # Generate a VM customization string for the current VM
   def self.vb_customize_vm(command, args)
-    "      vb.customize ['#{command}', :id, #{args.map { |a| "'#{a.to_s}'" }.join(', ')}]\n"
+    "      vb.customize ['#{command}', :id, #{args.map { |a| "'#{a}'" }.join(', ')}]\n"
   end
 
   def self.provider_vfile_section(host, options)
@@ -44,7 +44,7 @@ class Beaker::VagrantVirtualbox < Beaker::Vagrant
 
       provider_section << vb_customize_vm('modifyvm', ['--usb', 'on']) if controller == 'USB'
       provider_section << vb_customize_vm('storagectl', [
-        '--name', "Beaker #{controller} Controller"
+        '--name', "Beaker #{controller} Controller",
       ] + CONTROLLER_OPTIONS[controller.to_sym])
       host['volumes'].keys.each_with_index do |volume, index|
         volume_path = "#{host.name}-#{volume}.vdi"
@@ -72,7 +72,7 @@ class Beaker::VagrantVirtualbox < Beaker::Vagrant
 
     provider_section << "      vb.gui = true\n" unless host['vb_gui'].nil?
 
-    if /osx/i.match(host['platform'])
+    if /osx/i.match?(host['platform'])
       provider_section << "      vb.customize ['modifyvm', :id, '--cpuidset', '1','000206a7','02100800','1fbae3bf','bfebfbff']\n"
     end
 

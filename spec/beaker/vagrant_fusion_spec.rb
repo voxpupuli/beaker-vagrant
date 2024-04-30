@@ -26,7 +26,7 @@ describe Beaker::VagrantFusion do
     end
 
     it 'has a provider section' do
-      is_expected.to include(%(    v.vm.provider :vmware_fusion do |v|\n      v.vmx['memsize'] = '1024'\n    end))
+      expect(subject).to include(%(    v.vm.provider :vmware_fusion do |v|\n      v.vmx['memsize'] = '1024'\n    end))
     end
   end
 end
