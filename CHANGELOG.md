@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0](https://github.com/voxpupuli/beaker-vagrant/tree/1.3.0) (2024-04-30)
+
+[Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.2.0...1.3.0)
+
+**Implemented enhancements:**
+
+- Add Ruby 3.3 to CI [\#84](https://github.com/voxpupuli/beaker-vagrant/pull/84) ([bastelfreak](https://github.com/bastelfreak))
+- Use shorter directory names for beaker-hostgenerator [\#80](https://github.com/voxpupuli/beaker-vagrant/pull/80) ([ekohl](https://github.com/ekohl))
+
+**Merged pull requests:**
+
+- Gemfile: add faraday as GCG dependency [\#85](https://github.com/voxpupuli/beaker-vagrant/pull/85) ([bastelfreak](https://github.com/bastelfreak))
+- Use .each\_value when only the value is needed [\#82](https://github.com/voxpupuli/beaker-vagrant/pull/82) ([ekohl](https://github.com/ekohl))
+- voxpupuli-rubocop: Update to 2.5.0 [\#81](https://github.com/voxpupuli/beaker-vagrant/pull/81) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [1.2.0](https://github.com/voxpupuli/beaker-vagrant/tree/1.2.0) (2023-04-28)
 
 [Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.1.0...1.2.0)
