@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/puppetlabs/beaker-vagrant'
   s.summary     = 'Beaker DSL Extension Helpers!'
   s.description = 'For use for the Beaker acceptance testing tool'
-  s.license     = 'Apache2'
+  s.license     = 'Apache-2.0'
 
   s.required_ruby_version = Gem::Requirement.new('>= 2.7')
 
@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry', '~> 0.10'
   s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'rspec', '~> 3.0'
-  s.add_development_dependency 'simplecov'
+  s.add_development_dependency 'simplecov', '~> 0.22.0'
   s.add_development_dependency 'voxpupuli-rubocop', '~> 2.7.0'
 
   s.add_runtime_dependency 'beaker', '>= 4', '< 6'
