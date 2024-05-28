@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/puppetlabs/beaker-vagrant'
   s.summary     = 'Beaker DSL Extension Helpers!'
   s.description = 'For use for the Beaker acceptance testing tool'
-  s.license     = 'Apache2'
+  s.license     = 'Apache-2.0'
 
   s.required_ruby_version = Gem::Requirement.new('>= 2.7')
 
