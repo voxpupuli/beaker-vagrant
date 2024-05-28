@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry', '~> 0.10'
   s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'rspec', '~> 3.0'
-  s.add_development_dependency 'simplecov'
+  s.add_development_dependency 'simplecov', '~> 0.22.0'
   s.add_development_dependency 'voxpupuli-rubocop', '~> 2.7.0'
 
   s.add_runtime_dependency 'beaker', '>= 4', '< 6'
