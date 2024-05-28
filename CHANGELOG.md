@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://github.com/voxpupuli/beaker-vagrant/tree/1.4.0) (2024-05-28)
+
+[Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.3.0...1.4.0)
+
+**Implemented enhancements:**
+
+- beaker: Allow 6.x [\#88](https://github.com/voxpupuli/beaker-vagrant/pull/88) ([bastelfreak](https://github.com/bastelfreak))
+
+**Merged pull requests:**
+
+- Fix license identifier Apache2-\>Apache-2.0, fix version boundary for simplecov, Build gems with strict and verbose mode [\#87](https://github.com/voxpupuli/beaker-vagrant/pull/87) ([bastelfreak](https://github.com/bastelfreak))
+- voxpupuli-rubocop: Require 2.7.0 [\#86](https://github.com/voxpupuli/beaker-vagrant/pull/86) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [1.3.0](https://github.com/voxpupuli/beaker-vagrant/tree/1.3.0) (2024-04-30)
 
 [Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.2.0...1.3.0)
