@@ -26,7 +26,7 @@ describe Beaker::VagrantParallels do
     end
 
     it 'can make a Vagrantfile for a set of hosts' do
-      expect(subject).to include(%(    v.vm.provider :parallels do |prl|\n      prl.optimize_power_consumption = false\n      prl.memory = '1024'\n    end))
+      expect(subject).to include(%(    v.vm.provider :parallels do |prl|\n      prl.optimize_power_consumption = false\n      prl.memory = '2048'\n    end))
     end
   end
 

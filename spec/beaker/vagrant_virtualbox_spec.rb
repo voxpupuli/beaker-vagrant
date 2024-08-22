@@ -27,7 +27,7 @@ describe Beaker::VagrantVirtualbox do
     end
 
     it 'can make a Vagrantfile for a set of hosts' do
-      expect(subject).to include(%(    v.vm.provider :virtualbox do |vb|\n      vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1', '--audio', 'none']\n    end))
+      expect(subject).to include(%(    v.vm.provider :virtualbox do |vb|\n      vb.customize ['modifyvm', :id, '--memory', '2048', '--cpus', '2', '--audio', 'none']\n    end))
     end
 
     context 'with ioapic(multiple cores)' do

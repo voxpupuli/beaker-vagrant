@@ -45,7 +45,7 @@ describe Beaker::VagrantLibvirt do
     end
 
     it 'can specify the memory as an integer' do
-      expect(subject).to include('node.memory = 1024')
+      expect(subject).to include('node.memory = 2048')
     end
 
     it 'can specify the number of cpus' do

@@ -56,7 +56,7 @@ module Beaker
             v.vm.network :forwarded_port, guest: 443, host: 4443
             v.vm.network :forwarded_port, guest: 8080, host: 8080
             v.vm.provider :virtualbox do |vb|
-              vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1', '--audio', 'none']
+              vb.customize ['modifyvm', :id, '--memory', '2048', '--cpus', '2', '--audio', 'none']
             end
           end
           c.vm.define 'vm2' do |v|
@@ -71,7 +71,7 @@ module Beaker
             v.vm.network :forwarded_port, guest: 443, host: 4443
             v.vm.network :forwarded_port, guest: 8080, host: 8080
             v.vm.provider :virtualbox do |vb|
-              vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1', '--audio', 'none']
+              vb.customize ['modifyvm', :id, '--memory', '2048', '--cpus', '2', '--audio', 'none']
             end
           end
           c.vm.define 'vm3' do |v|
@@ -86,7 +86,7 @@ module Beaker
             v.vm.network :forwarded_port, guest: 443, host: 4443
             v.vm.network :forwarded_port, guest: 8080, host: 8080
             v.vm.provider :virtualbox do |vb|
-              vb.customize ['modifyvm', :id, '--memory', '1024', '--cpus', '1', '--audio', 'none']
+              vb.customize ['modifyvm', :id, '--memory', '2048', '--cpus', '2', '--audio', 'none']
             end
           end
         end
@@ -264,7 +264,7 @@ module Beaker
 
       generated_file = File.read(File.expand_path(File.join(path, 'Vagrantfile')))
 
-      match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', 'hello!', '--cpus', '1', '--audio', 'none'\]/)
+      match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', 'hello!', '--cpus', '2', '--audio', 'none'\]/)
 
       expect(match).not_to be_nil
     end
@@ -276,7 +276,7 @@ module Beaker
 
       generated_file = File.read(File.expand_path(File.join(path, 'Vagrantfile')))
 
-      match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', '1024', '--cpus', 'goodbye!', '--audio', 'none'\]/)
+      match = generated_file.match(/vb.customize \['modifyvm', :id, '--memory', '2048', '--cpus', 'goodbye!', '--audio', 'none'\]/)
 
       expect(match).not_to be_nil
     end
