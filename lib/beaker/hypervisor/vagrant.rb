@@ -291,7 +291,7 @@ module Beaker
       elsif options['vagrant_cpus']
         options['vagrant_cpus']
       else
-        '1'
+        '2'
       end
     end
 
@@ -300,10 +300,8 @@ module Beaker
         host['vagrant_memsize']
       elsif options['vagrant_memsize']
         options['vagrant_memsize']
-      elsif /windows/.match?(host['platform'])
-        '2048'
       else
-        '1024'
+        '2048'
       end
     end
 

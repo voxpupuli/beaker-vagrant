@@ -28,7 +28,7 @@ describe Beaker::VagrantWorkstation do
     end
 
     it 'for a set of hosts' do
-      expect(subject).to include(%(    v.vm.provider :vmware_workstation do |v|\n      v.vmx['memsize'] = '1024'\n    end))
+      expect(subject).to include(%(    v.vm.provider :vmware_workstation do |v|\n      v.vmx['memsize'] = '2048'\n    end))
     end
 
     context 'with whitelist_verified' do
