@@ -103,6 +103,16 @@ module Beaker
       expect(vagrantfile).to match(/(ssh.forward_agent = true)/)
     end
 
+    it 'can make a Vagrantfile with ssh timeout' do
+      path = vagrant.instance_variable_get(:@vagrant_path)
+
+      hosts = make_hosts({ ssh_keep_alive: true }, 1)
+      vagrant.make_vfile(hosts, options)
+
+      vagrantfile = File.read(File.expand_path(File.join(path, 'Vagrantfile')))
+      expect(vagrantfile).to match(/(ssh.keep_alive = true)/)
+    end
+
     it 'can replace underscores in host.name with hypens' do
       path = vagrant.instance_variable_get(:@vagrant_path)
 
