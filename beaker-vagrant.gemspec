@@ -16,18 +16,18 @@ Gem::Specification.new do |s|
   s.description = 'For use for the Beaker acceptance testing tool'
   s.license     = 'Apache-2.0'
 
-  s.required_ruby_version = Gem::Requirement.new('>= 2.7')
+  s.required_ruby_version = Gem::Requirement.new('>= 3.2', '< 4')
 
   s.files         = `git ls-files`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
   # Testing dependencies
-  s.add_development_dependency 'fakefs', '>= 0.6', '< 3.0'
+  s.add_development_dependency 'fakefs', '>= 0.6', '< 4'
   s.add_development_dependency 'pry', '~> 0.10'
   s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'rspec', '~> 3.0'
-  s.add_development_dependency 'voxpupuli-rubocop', '~> 2.8.0'
+  s.add_development_dependency 'voxpupuli-rubocop', '~> 4.1.0'
 
-  s.add_runtime_dependency 'beaker', '>= 4', '< 8'
+  s.add_dependency 'beaker', '>= 4', '< 8'
 end

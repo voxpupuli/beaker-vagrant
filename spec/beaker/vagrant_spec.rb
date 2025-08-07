@@ -185,7 +185,7 @@ module Beaker
     end
 
     it 'raises an error if path is not set on shell_provisioner' do
-      path = vagrant.instance_variable_get(:@vagrant_path)
+      vagrant.instance_variable_get(:@vagrant_path)
 
       hosts = make_hosts({ shell_provisioner: {} }, 1)
       expect do
@@ -194,7 +194,7 @@ module Beaker
     end
 
     it 'raises an error if path is EMPTY on shell_provisioner' do
-      path = vagrant.instance_variable_get(:@vagrant_path)
+      vagrant.instance_variable_get(:@vagrant_path)
 
       empty_shell_path = ''
       hosts = make_hosts({
