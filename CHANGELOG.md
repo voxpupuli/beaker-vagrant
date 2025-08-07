@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.0](https://github.com/voxpupuli/beaker-vagrant/tree/2.0.0) (2025-08-07)
+
+[Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.4.0...2.0.0)
+
+**Breaking changes:**
+
+- Require Ruby 3.2 or newer [\#95](https://github.com/voxpupuli/beaker-vagrant/pull/95) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- beaker: Allow 7.x [\#93](https://github.com/voxpupuli/beaker-vagrant/pull/93) ([bastelfreak](https://github.com/bastelfreak))
+- Increase defaults to 2 CPU cores/2G ram [\#90](https://github.com/voxpupuli/beaker-vagrant/pull/90) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [1.4.0](https://github.com/voxpupuli/beaker-vagrant/tree/1.4.0) (2024-05-28)
 
 [Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.3.0...1.4.0)
@@ -193,7 +206,6 @@
 
 **Merged pull requests:**
 
-- \(maint\) add support for extra vmware configuration [\#14](https://github.com/voxpupuli/beaker-vagrant/pull/14) ([lmayorga1980](https://github.com/lmayorga1980))
 - Bugfix: Issue with user given invalid keys for synced folders [\#9](https://github.com/voxpupuli/beaker-vagrant/pull/9) ([cardil](https://github.com/cardil))
 
 ## [0.4.0](https://github.com/voxpupuli/beaker-vagrant/tree/0.4.0) (2018-02-22)
@@ -219,7 +231,6 @@
 **Merged pull requests:**
 
 - Improve documentation on volumes support [\#11](https://github.com/voxpupuli/beaker-vagrant/pull/11) ([beezly](https://github.com/beezly))
-- add support for ioapic for virtualbox [\#10](https://github.com/voxpupuli/beaker-vagrant/pull/10) ([lmayorga1980](https://github.com/lmayorga1980))
 
 ## [0.2.0](https://github.com/voxpupuli/beaker-vagrant/tree/0.2.0) (2018-01-09)
 
@@ -232,10 +243,6 @@
 ## [0.1.1](https://github.com/voxpupuli/beaker-vagrant/tree/0.1.1) (2017-11-20)
 
 [Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/0.1.0...0.1.1)
-
-**Merged pull requests:**
-
-- add support for download\_insecure config [\#5](https://github.com/voxpupuli/beaker-vagrant/pull/5) ([lmayorga1980](https://github.com/lmayorga1980))
 
 ## [0.1.0](https://github.com/voxpupuli/beaker-vagrant/tree/0.1.0) (2017-07-14)
 
