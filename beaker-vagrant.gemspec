@@ -22,6 +22,13 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
+  s.metadata = {
+    'source_code_uri' => 'https://github.com/voxpupuli/beaker-vagrant',
+    'changelog_uri' => 'https://github.com/voxpupuli/beaker-vagrant/blob/main/CHANGELOG.md',
+    'bug_tracker_uri' => 'https://github.com/voxpupuli/beaker-vagrant/issues',
+    'rubygems_mfa_required' => 'true',
+  }
+
   # Testing dependencies
   s.add_development_dependency 'fakefs', '>= 0.6', '< 4'
   s.add_development_dependency 'pry', '~> 0.10'
