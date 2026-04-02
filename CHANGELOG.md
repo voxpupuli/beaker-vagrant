@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/voxpupuli/beaker-vagrant/tree/2.1.0) (2026-04-02)
+
+[Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/2.0.0...2.1.0)
+
+**Implemented enhancements:**
+
+- Add Ruby 4.0 support [\#100](https://github.com/voxpupuli/beaker-vagrant/pull/100) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [2.0.0](https://github.com/voxpupuli/beaker-vagrant/tree/2.0.0) (2025-08-07)
 
 [Full Changelog](https://github.com/voxpupuli/beaker-vagrant/compare/1.4.0...2.0.0)
