@@ -53,6 +53,7 @@ module Beaker
       hosts.each do |host|
         host.name.tr!('_', '-') # Rewrite Hostname with hyphens instead of underscores to get legal hostname
         set_host_default_ip(host)
+        v_file << "  c.ssh.keep_alive = true\n" if host['ssh_keep_alive'] == true
         v_file << "  c.vm.define '#{host.name}' do |v|\n"
         v_file << "    v.vm.hostname = '#{host.name}'\n"
         v_file << "    v.vm.box = '#{host['box']}'\n"
